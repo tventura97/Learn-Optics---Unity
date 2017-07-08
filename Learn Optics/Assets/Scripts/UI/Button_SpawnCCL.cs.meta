@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c55c28931f5756047952c903e67fdbaf
+timeCreated: 1499261078
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - ConcaveLens: {fileID: 1284459474395002, guid: e8b81702902886549bd5138d4db44bec,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

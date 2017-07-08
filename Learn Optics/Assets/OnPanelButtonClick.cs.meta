@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5f87fe377c157774282276767bbb641e
+timeCreated: 1499352300
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - AnimatedLightEmitter: {fileID: 1112219451064534, guid: ec1f4403ec8ff5d42acd57348aa016a4,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,82 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+namespace DigitalRuby.AnimatedLineRenderer
+{
+    [RequireComponent(typeof(AnimatedLineRenderer))]
+    public class VFocalPointRayALR : MonoBehaviour
+    {
+
+        private AnimatedLineRenderer animatedLineRenderer;
+        private float FocalLength;
+        private float ObjectDistance;
+        private float ImageDistance;
+        private float Magnification;
+        private RaycastHit hit;
+        private GameObject OpticalElement;
+        private Vector3 FocalPointLeft;
+        public bool VirtualImage;
+
+        private void Start()
+        {
+            animatedLineRenderer = GetComponent<AnimatedLineRenderer>();
+            OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
+            FocalLength = 12;
+            VirtualImage = false;
+        }
+        void Update()
+        {
+            transform.eulerAngles = new Vector3(0, 0, AngleBetween(Vector3.right, FocalPointLeft - transform.position));
+            if (Mathf.Abs (transform.position.x - OpticalElement.transform.position.x) < FocalLength)
+            {
+                VirtualImage = true;
+            }
+            else
+            {
+                VirtualImage = false;
+            }
+        }
+
+        public void onClick()
+        {
+            if (VirtualImage)
+            {
+                animatedLineRenderer.Reset();
+                FocalPointLeft = new Vector3(OpticalElement.transform.position.x - FocalLength, OpticalElement.transform.position.y, OpticalElement.transform.position.z);
+
+                animatedLineRenderer.Enqueue(transform.position);
+                animatedLineRenderer.Enqueue(CalculateFinalPosition(), 0.5F);
+                animatedLineRenderer.Enqueue(new Vector3(-1000, CalculateFinalPosition().y, CalculateFinalPosition().z), 3);
+                //animatedLineRenderer.Enqueue(-new Vector3(100, CalculateFinalPosition().y, CalculateFinalPosition().z), 4);
+                //animatedLineRenderer.Enqueue(-new Vector3(1000, CalculateFinalPosition().y, CalculateFinalPosition().z), 1000);
+            }
+  
+        }
+
+        private void DebugLines()
+        {
+            Debug.DrawLine(transform.position, CalculateFinalPosition());
+            Debug.DrawRay(CalculateFinalPosition(), 1000 * Vector3.right);
+
+        }
+
+        private float AngleBetween(Vector3 From, Vector3 To)
+        {
+            float sign = Mathf.Sign(Vector3.Cross(From, To).z);
+            float angle = Vector3.Angle(From, To);
+
+            return angle * sign;
+        }
+
+        //This is calculated using the World Space
+        private Vector3 CalculateFinalPosition()
+        {
+            float FinalX = OpticalElement.transform.position.x;
+            float FinalY = OpticalElement.transform.position.y + Mathf.Abs(OpticalElement.transform.position.x - transform.position.x) * Mathf.Tan(Mathf.Deg2Rad * AngleBetween(Vector3.right, FocalPointLeft - transform.position)) + Mathf.Abs(transform.position.y - OpticalElement.transform.position.y);
+            float FinalZ = OpticalElement.transform.position.z;
+
+            return new Vector3(FinalX, FinalY, FinalZ);
+        }
+    }
+}
+

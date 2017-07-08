@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f4dac72dcf0b6bc49a1d3d252998616e
+timeCreated: 1499261132
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - CurvedMirror: {fileID: 1827735856353894, guid: b8270ef91398ae94ebe0a2916afb6e70,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
