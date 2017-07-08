@@ -1,8 +1,8 @@
-﻿<Properties StartupItem="Learn Optics.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerObject\SliderController.cs">
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\TogglePlayScene.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlayerObject\SliderController.cs" Line="23" Column="1" />
+      <File FileName="Assets\TogglePlayScene.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
