@@ -43,7 +43,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 Vector3 point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
                 transform.position = new Vector3(point.x, origin.y + 2, 0);
-
+                ResetALRs();
 
             }
             if (Input.GetKey(KeyCode.LeftArrow))
