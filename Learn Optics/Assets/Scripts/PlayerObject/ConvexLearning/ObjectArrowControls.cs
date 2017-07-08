@@ -79,6 +79,10 @@ namespace DigitalRuby.AnimatedLineRenderer
                 isSelected = true;
 
             }
+            else
+            {
+                isSelected = false;
+            }
         }
     }
 }
