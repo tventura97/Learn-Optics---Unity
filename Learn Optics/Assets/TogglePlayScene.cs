@@ -11,6 +11,7 @@ public class TogglePlayScene : MonoBehaviour {
 	}
 	
 	public void OnToggle () {
-		ScenePanel.SetActive (false);
+		ScenePanel.SetActive (!ScenePanel.activeSelf);
+        
 	}
 }
