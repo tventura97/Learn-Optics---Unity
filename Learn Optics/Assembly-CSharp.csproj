@@ -73,6 +73,8 @@
      <Compile Include="Assets\Scripts\UI\Button_SpawnMIR.cs" />
      <Compile Include="Assets\Scripts\UI\MenuButtonClick.cs" />
      <Compile Include="Assets\TogglePlayScene.cs" />
+     <Compile Include="Assets\ToggleRealRays.cs" />
+     <Compile Include="Assets\ToggleVirtualRays.cs" />
      <None Include="Assets\AnimatedLineRenderer\Readme.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
