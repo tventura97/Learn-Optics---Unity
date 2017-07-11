@@ -14,6 +14,6 @@ public class ObjectDistanceText : MonoBehaviour
     }
     void Update()
     {
-        ObjectDistanceTextMesh.text = (OpticalElement.transform.position.x - transform.parent.position.x).ToString("F2");
+        ObjectDistanceTextMesh.text = "do = " + (OpticalElement.transform.position.x - transform.parent.position.x).ToString("F2");
     }
 }

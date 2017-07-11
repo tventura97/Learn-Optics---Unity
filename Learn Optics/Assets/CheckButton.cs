@@ -10,10 +10,12 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         GameObject QuizToggle;
         GameObject ImageArrow;
+        GameObject OpticalElement;
         void Start()
         {
             QuizToggle = GameObject.Find("QuizToggle");
             ImageArrow = GameObject.Find("ImageArrow");
+            OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
         }
 
         void Update()
@@ -26,13 +28,12 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void OnClick()
         {
-            if (((GameObject.Find("Root").transform.position.x - ImageArrow.GetComponent<ImageArrowGeneration>().ImageDistance)/ImageArrow.transform.position.x > 0.9) &&
-                ((GameObject.Find("Root").transform.position.x - ImageArrow.GetComponent<ImageArrowGeneration>().ImageDistance)/ ImageArrow.transform.position.x) < 1.1)
-                {
-                ImageArrow.GetComponent<ImageArrowGeneration>().ResetALR();
+            if (Mathf.Abs((OpticalElement.transform.position.x - ImageArrow.transform.position.x) / ImageArrow.GetComponent<ImageArrowGeneration>().ImageDistance) > 0.98F
+                && Mathf.Abs((OpticalElement.transform.position.x - ImageArrow.transform.position.x) / ImageArrow.GetComponent<ImageArrowGeneration>().ImageDistance) < 1.02F) 
+            {
                 print("correct");
-                }
-            else
+            }
+            else 
             {
                 print("incorrect");
             }

@@ -9,23 +9,27 @@ namespace DigitalRuby.AnimatedLineRenderer
     public class AnimatedLRScript : MonoBehaviour
     {
         private float Delay;
+        private float FocalPoint;
+        private Vector3 FocalPointVector;
         public bool fire;
         private RaycastHit hit;
         AnimatedLineRenderer LineRenderer;
-        GameObject Root;
+        GameObject OpticalElement;
         // Use this for initialization
         void Start()
         {
-            Root = GameObject.Find("Root");
+            OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
             LineRenderer = GetComponent<AnimatedLineRenderer>();
             Delay = 0.75F;
+            FocalPoint = 12;
+            FocalPointVector = new Vector3(OpticalElement.transform.position.x + FocalPoint, OpticalElement.transform.position.y, 0);
             if (Physics.Raycast(transform.position, transform.right, out hit))
             {
                 print("Click");
                 LineRenderer.Enqueue(transform.position);
                 LineRenderer.Enqueue(hit.point);
-                LineRenderer.Enqueue((new Vector3(Root.transform.position.x + 27.6F, Root.transform.position.y, 0)),5);
-                LineRenderer.Enqueue((new Vector3(10000, 0, 0)), 100);
+                LineRenderer.Enqueue(FocalPointVector, 0.5F);
+                LineRenderer.Enqueue(1000 * (FocalPointVector - hit.point), 50);
 
             }
         }

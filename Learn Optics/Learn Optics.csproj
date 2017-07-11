@@ -89,10 +89,6 @@
     <Compile Include="Assets\AnimatedLineRenderer\Scripts\PhasorScript.cs" />
     <Compile Include="Assets\CheckButton.cs" />
     <Compile Include="Assets\DebuggingText.cs" />
-    <Compile Include="Assets\ImageArrowHolderPosition.cs" />
-    <Compile Include="Assets\ImageArrowText.cs" />
-    <Compile Include="Assets\ObjectDistanceText.cs" />
-    <Compile Include="Assets\OnPanelButtonClick.cs" />
     <Compile Include="Assets\SandboxScene.cs" />
     <Compile Include="Assets\Scripts\OpticalProperties.cs" />
     <Compile Include="Assets\Scripts\PlayerObject\ConvexLearning\ImageArrow\ImageArrowGeneration.cs" />
@@ -110,7 +106,10 @@
     <Compile Include="Assets\Scripts\Sliders\Slider_NIndex.cs" />
     <Compile Include="Assets\Scripts\Sliders\Slider_RoC.cs" />
     <Compile Include="Assets\Scripts\UI\LearnConvex\GenerateQuiz.cs" />
+    <Compile Include="Assets\Scripts\UI\LearnConvex\ImageArrowText.cs" />
     <Compile Include="Assets\Scripts\UI\LearnConvex\NextScene.cs" />
+    <Compile Include="Assets\Scripts\UI\LearnConvex\ObjectDistanceText.cs" />
+    <Compile Include="Assets\Scripts\UI\LearnConvex\PlayConvexLearningScene.cs" />
     <Compile Include="Assets\Scripts\UI\LearnConvex\QuizToggle.cs" />
     <Compile Include="Assets\Scripts\UI\LearnConvex\TogglePlayScene.cs" />
     <Compile Include="Assets\Scripts\UI\LearnConvex\ToggleRealRays.cs" />

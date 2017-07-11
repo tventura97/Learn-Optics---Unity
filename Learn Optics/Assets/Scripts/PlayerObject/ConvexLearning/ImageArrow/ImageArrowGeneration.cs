@@ -65,31 +65,46 @@ namespace DigitalRuby.AnimatedLineRenderer
                     checkSelected();
 
                 }
-                if (isSelected)
+                if (true)
                 {
+                    if (Input.GetKey(KeyCode.LeftArrow))
+                    {
+                        transform.position -= new Vector3(0.5F, 0, 0);
+                    }
+                    if (Input.GetKey(KeyCode.RightArrow))
+                    {
+                        transform.position += new Vector3(0.5F, 0, 0);
+                    }
+                    if (transform.position.x - OpticalElement.transform.position.x < 0)
+                    {
+                        transform.position = new Vector3(transform.position.x, OpticalElement.transform.position.y + 2 * Magnification, 0);
+
+                        spriteRenderer.flipY = false;
+                    }
+
+                    else if (transform.position.x - OpticalElement.transform.position.x >= 0)
+                    {
+                        transform.position = new Vector3(transform.position.x, OpticalElement.transform.position.y - 2 * Magnification, 0);
+                        spriteRenderer.flipY = true;
+                    }
+                    //Touch Controls
+                    /*
                     if (transform.position.x - OpticalElement.transform.position.x < 0)
                     {
                         Vector3 point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                        transform.position = new Vector3(point.x, origin.y + 2, 0);
+                        transform.position = new Vector3(point.x, origin.y + 2 * Magnification, 0);
                         spriteRenderer.flipY = false;
                     }
                     else if (transform.position.x - OpticalElement.transform.position.x >= 0)
                     {
                         Vector3 point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                        transform.position = new Vector3(point.x, origin.y - 2, 0);
+                        transform.position = new Vector3(point.x, origin.y - 2 * Magnification, 0);
                         spriteRenderer.flipY = true;
                     }
+                    */
 
+                }
 
-                }
-                if (Input.GetKey(KeyCode.LeftArrow))
-                {
-                    transform.position -= new Vector3(0.5F, 0, 0);
-                }
-                if (Input.GetKey(KeyCode.RightArrow))
-                {
-                    transform.position += new Vector3(0.5F, 0, 0);
-                }
 
             }
         }

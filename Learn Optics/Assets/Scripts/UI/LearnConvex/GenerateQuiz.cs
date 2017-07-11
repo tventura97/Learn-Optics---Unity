@@ -21,7 +21,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             if (GameObject.Find("QuizToggle").GetComponent<Toggle>().isOn)
             {
                 ObjectArrow.transform.GetComponent<ObjectArrowControls>().ResetALRs();
-                ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 4),
+                ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 18.5F),
                 OpticalElement.transform.position.y + 2, OpticalElement.transform.position.z);
             }
         }
