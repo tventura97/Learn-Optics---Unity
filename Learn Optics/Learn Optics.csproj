@@ -89,6 +89,9 @@
     <Compile Include="Assets\AnimatedLineRenderer\Scripts\PhasorScript.cs" />
     <Compile Include="Assets\CheckButton.cs" />
     <Compile Include="Assets\DebuggingText.cs" />
+    <Compile Include="Assets\ImageArrowHolderPosition.cs" />
+    <Compile Include="Assets\ImageArrowText.cs" />
+    <Compile Include="Assets\ObjectDistanceText.cs" />
     <Compile Include="Assets\OnPanelButtonClick.cs" />
     <Compile Include="Assets\SandboxScene.cs" />
     <Compile Include="Assets\Scripts\OpticalProperties.cs" />
@@ -116,7 +119,6 @@
     <Compile Include="Assets\Scripts\UI\Sandbox\Button_SpawnCVL.cs" />
     <Compile Include="Assets\Scripts\UI\Sandbox\Button_SpawnMIR.cs" />
     <Compile Include="Assets\Scripts\UI\Sandbox\MenuButtonClick.cs" />
-    <Compile Include="Assets\TextMeshScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AnimatedLineRenderer\Readme.txt" />
