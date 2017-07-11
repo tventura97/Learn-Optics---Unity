@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DigitalRuby.AnimatedLineRenderer
 {
@@ -18,6 +19,8 @@ namespace DigitalRuby.AnimatedLineRenderer
         AnimatedLineRenderer VOpticalCenterRayALR;
         private bool isSelected;
         private Vector3 origin;
+        bool Quizzing;
+
         private void Start()
         {
             FocalPointRay = GameObject.Find("FocalPointRay");
@@ -34,29 +37,34 @@ namespace DigitalRuby.AnimatedLineRenderer
         }
         void Update()
         {
-            if (Input.touchCount >= 1)
-            {
-                checkSelected();
+            Quizzing = GameObject.Find("QuizToggle").GetComponent<Toggle>().isOn;
 
-            }
-            if (isSelected)
+            if (!Quizzing)
             {
-                Vector3 point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                transform.position = new Vector3(point.x, origin.y + 2, 0);
-                ResetALRs();
+                if (Input.touchCount >= 1)
+                {
+                    checkSelected();
 
+                }
+                if (isSelected)
+                {
+                    Vector3 point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+                    transform.position = new Vector3(point.x, origin.y + 2, 0);
+                    ResetALRs();
+
+                }
+                if (Input.GetKey(KeyCode.LeftArrow))
+                {
+                    ResetALRs();
+                    transform.position -= new Vector3(0.5F, 0, 0);
+                }
+                if (Input.GetKey(KeyCode.RightArrow))
+                {
+                    ResetALRs();
+                    transform.position += new Vector3(0.5F, 0, 0);
+                }
             }
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                ResetALRs();
-                transform.position -= new Vector3(0.5F, 0, 0);
-            }
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                ResetALRs();
-                transform.position += new Vector3(0.5F, 0, 0);
-            }
-           
+            
 
         }
 
