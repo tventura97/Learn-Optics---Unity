@@ -8,7 +8,6 @@ namespace DigitalRuby.AnimatedLineRenderer
     [RequireComponent(typeof(AnimatedLineRenderer))]
     public class AnimatedLRScript : MonoBehaviour
     {
-        private float Delay;
         private float FocalPoint;
         private Vector3 FocalPointVector;
         public bool fire;
@@ -20,7 +19,6 @@ namespace DigitalRuby.AnimatedLineRenderer
         {
             OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
             LineRenderer = GetComponent<AnimatedLineRenderer>();
-            Delay = 0.75F;
             FocalPoint = 12;
             FocalPointVector = new Vector3(OpticalElement.transform.position.x + FocalPoint, OpticalElement.transform.position.y, 0);
             if (Physics.Raycast(transform.position, transform.right, out hit))

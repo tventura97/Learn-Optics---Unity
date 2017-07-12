@@ -118,6 +118,7 @@
     <Compile Include="Assets\Scripts\UI\Sandbox\Button_SpawnCVL.cs" />
     <Compile Include="Assets\Scripts\UI\Sandbox\Button_SpawnMIR.cs" />
     <Compile Include="Assets\Scripts\UI\Sandbox\MenuButtonClick.cs" />
+    <Compile Include="Assets\SetPoints.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AnimatedLineRenderer\Readme.txt" />
