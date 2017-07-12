@@ -91,20 +91,18 @@
     <Compile Include="Assets\DebuggingText.cs" />
     <Compile Include="Assets\SandboxScene.cs" />
     <Compile Include="Assets\Scripts\OpticalProperties.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\ConvexLearning\ImageArrow\ImageArrowGeneration.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\ConvexLearning\Light Ray ALRs\FocalPointRayALR.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\ConvexLearning\Light Ray ALRs\OpticalCenterRayALR.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\ConvexLearning\Light Ray ALRs\ParallelRayALR.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\ConvexLearning\Light Ray ALRs\VFocalPointRayALR.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\ConvexLearning\Light Ray ALRs\VOPticalCenterRayALR.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\ConvexLearning\Light Ray ALRs\VParallelRayALR.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\ConvexLearning\ObjectArrow\ObjectArrowControls.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\Sandbox\Light_Physics.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\Sandbox\Player_Controls.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\Sandbox\Properties_Optical.cs" />
-    <Compile Include="Assets\Scripts\PlayerObject\Sandbox\SliderController.cs" />
-    <Compile Include="Assets\Scripts\Sliders\Slider_NIndex.cs" />
-    <Compile Include="Assets\Scripts\Sliders\Slider_RoC.cs" />
+    <Compile Include="Assets\Scripts\Scenes\ConvexLearning\ImageArrow\ImageArrowGeneration.cs" />
+    <Compile Include="Assets\Scripts\Scenes\ConvexLearning\Light Ray ALRs\FocalPointRayALR.cs" />
+    <Compile Include="Assets\Scripts\Scenes\ConvexLearning\Light Ray ALRs\OpticalCenterRayALR.cs" />
+    <Compile Include="Assets\Scripts\Scenes\ConvexLearning\Light Ray ALRs\ParallelRayALR.cs" />
+    <Compile Include="Assets\Scripts\Scenes\ConvexLearning\Light Ray ALRs\VFocalPointRayALR.cs" />
+    <Compile Include="Assets\Scripts\Scenes\ConvexLearning\Light Ray ALRs\VOPticalCenterRayALR.cs" />
+    <Compile Include="Assets\Scripts\Scenes\ConvexLearning\Light Ray ALRs\VParallelRayALR.cs" />
+    <Compile Include="Assets\Scripts\Scenes\ConvexLearning\ObjectArrow\ObjectArrowControls.cs" />
+    <Compile Include="Assets\Scripts\Scenes\Sandbox\Light_Physics.cs" />
+    <Compile Include="Assets\Scripts\Scenes\Sandbox\Player_Controls.cs" />
+    <Compile Include="Assets\Scripts\Scenes\Sandbox\Properties_Optical.cs" />
+    <Compile Include="Assets\Scripts\Scenes\Sandbox\SliderController.cs" />
     <Compile Include="Assets\Scripts\UI\LearnConvex\GenerateQuiz.cs" />
     <Compile Include="Assets\Scripts\UI\LearnConvex\ImageArrowText.cs" />
     <Compile Include="Assets\Scripts\UI\LearnConvex\NextScene.cs" />
@@ -118,6 +116,8 @@
     <Compile Include="Assets\Scripts\UI\Sandbox\Button_SpawnCVL.cs" />
     <Compile Include="Assets\Scripts\UI\Sandbox\Button_SpawnMIR.cs" />
     <Compile Include="Assets\Scripts\UI\Sandbox\MenuButtonClick.cs" />
+    <Compile Include="Assets\Scripts\UI\Sliders\Slider_NIndex.cs" />
+    <Compile Include="Assets\Scripts\UI\Sliders\Slider_RoC.cs" />
     <Compile Include="Assets\SetPoints.cs" />
   </ItemGroup>
   <ItemGroup>

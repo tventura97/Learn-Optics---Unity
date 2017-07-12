@@ -49,7 +49,9 @@ namespace DigitalRuby.AnimatedLineRenderer
                 "To understand how light refracts through a convex lens,", "Imagine that the lens is really just a series of prisms stacked on top of each other.",
                 "When light passes through a prism, it always bends towards the base of the prism.", "These rays of light form images where they intersect",
                 "This method of representing image formation is known as ray-tracing.", "To repeat this process, first draw a ray that propagates from the object to the lens parallel to the optical axis",
-                "This ray will pass through the focal point of the lens"};
+                "This ray will pass through the focal point of the lens", "Next, draw a ray that passes through the optical center of the lens. This will be undeviated by the lens",
+                "Finally, draw a ray that passes through the left focal point of the lens", "This ray will emerge from the lens parallel to the optical axis",
+                "The image forms at the intersection of the three rays, and is inverted."};
 
 
             promptPanelText = GameObject.Find("PromptPanelText");
@@ -135,7 +137,39 @@ namespace DigitalRuby.AnimatedLineRenderer
                     ParallelRay.GetComponent<SetPoints>().SetLinePoint(1000 * (FocalPoint - new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F)), 100);
                     break;
 
-               
+                case 9:
+                    OpticalCenterRay = Instantiate(ProgrammableALR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
+                    OpticalCenterRay.GetComponent<SetPoints>().InitializeALR();
+                    OpticalCenterRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F), 0);
+                    OpticalCenterRay.GetComponent<SetPoints>().SetLinePoint(1000 * (new Vector3(OpticalElement.transform.position.x, OpticalElement.transform.position.y) 
+                                                                              - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F)), 100);
+                    break;
+
+                case 10:
+                    FocalPointRay = Instantiate(ProgrammableALR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
+                    FocalPointRay.GetComponent<SetPoints>().InitializeALR();
+                    FocalPointRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F), 0);
+                
+                    //This -57.3F is calculated from a different class. Since this is a demonstrative tutorial that has no user interaction, I'm just gonna go ahead and leave that value 
+                    //hard coded here.
+                    FocalPointRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(OpticalElement.transform.position.x, -57.3F), 2);
+                    break;
+                case 11:
+                    FocalPointRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(100, -57.3F, 0), 2);
+                    break;
+
+                case 12:
+                    ImageArrow.SetActive(true);
+                    break;
+
+                case 13:
+                    GameObject[] ProgrammableALRS = GameObject.FindGameObjectsWithTag("ProgrammableALR");
+                    for (int i = 0; i < ProgrammableALRS.Length; i++)
+                    {
+                        Destroy(ProgrammableALRS[i]);
+                    }
+                    break;
+
 
             }
 

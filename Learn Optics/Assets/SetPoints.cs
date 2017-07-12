@@ -15,12 +15,12 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void InitializeALR()
         {
+            //Initialize the AnimatedLightRenderer here. When this script is called, it probably doesn't call Start(), so this function thinks that RayRenderer isn't initialized
             RayRenderer = GetComponent<AnimatedLineRenderer>();
 
         }
         public void SetLinePoints(Vector3 From, Vector3 To, float duration)
         {
-            //Initialize the AnimatedLightRenderer here. When this script is called, it probably doesn't call Start(), so this function thinks that RayRenderer isn't initialized
             RayRenderer.Enqueue(From);
             RayRenderer.Enqueue(To, duration);
 
