@@ -99,6 +99,7 @@
     <Compile Include="Assets\Scripts\Scenes\ConvexLearning\Light Ray ALRs\VOPticalCenterRayALR.cs" />
     <Compile Include="Assets\Scripts\Scenes\ConvexLearning\Light Ray ALRs\VParallelRayALR.cs" />
     <Compile Include="Assets\Scripts\Scenes\ConvexLearning\ObjectArrow\ObjectArrowControls.cs" />
+    <Compile Include="Assets\Scripts\Scenes\ConvexLearning\SetPoints.cs" />
     <Compile Include="Assets\Scripts\Scenes\Sandbox\Light_Physics.cs" />
     <Compile Include="Assets\Scripts\Scenes\Sandbox\Player_Controls.cs" />
     <Compile Include="Assets\Scripts\Scenes\Sandbox\Properties_Optical.cs" />
@@ -118,7 +119,7 @@
     <Compile Include="Assets\Scripts\UI\Sandbox\MenuButtonClick.cs" />
     <Compile Include="Assets\Scripts\UI\Sliders\Slider_NIndex.cs" />
     <Compile Include="Assets\Scripts\UI\Sliders\Slider_RoC.cs" />
-    <Compile Include="Assets\SetPoints.cs" />
+    <Compile Include="Assets\SetLRPoints.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AnimatedLineRenderer\Readme.txt" />

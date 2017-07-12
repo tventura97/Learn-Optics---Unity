@@ -10,6 +10,7 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public GameObject AnimatedLightEmitter;
         public GameObject ProgrammableALR;
+        public GameObject ProgrammableLR;
         GameObject promptPanelText;
         GameObject ObjectArrow;
         GameObject ImageArrow;
@@ -19,6 +20,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         GameObject OpticalCenterRay;
         GameObject FocalPointRay;
         GameObject OpticalElement;
+        GameObject CurrentRay;
         Animator MainCamera;
         Animator PrismHolder;
         Text panelText;
@@ -27,7 +29,10 @@ namespace DigitalRuby.AnimatedLineRenderer
         string[] texts;
         int promptNumber;
         int counter;
+        bool LRInteract;
         Vector3 FocalPoint;
+        int LRIndex;
+        int CurrentRayIndex;
 
         void Start()
         {
@@ -42,8 +47,10 @@ namespace DigitalRuby.AnimatedLineRenderer
             FocalPointMarkerHolder = GameObject.Find("FocalPointMarkerHolder");
             ObjectArrow.SetActive(false);
             ImageArrow.SetActive(false);
-            FocalPointMarkerHolder.SetActive(false);
+            FocalPointMarkerHolder.SetActive(true);
             FocalPoint = new Vector3(OpticalElement.transform.position.x + 12, OpticalElement.transform.position.y);
+            LRInteract = false;
+            LRIndex = 0;
             //Look I know this is a dumb way to initialize it but I'm lazy right now
             texts = new string[] { "This is a convex, or converging, lens.", "It is called a converging lens because rays of light that pass through the lens converge at the lens' focal point.",
                 "To understand how light refracts through a convex lens,", "Imagine that the lens is really just a series of prisms stacked on top of each other.",
@@ -57,11 +64,59 @@ namespace DigitalRuby.AnimatedLineRenderer
             promptPanelText = GameObject.Find("PromptPanelText");
             print(GameObject.Find("PromptPanelText").GetComponent<Text>());
             panelText = promptPanelText.GetComponent<Text>();
-            counter = 1;
+            counter = 13;
             panelText.text = texts[0];
 
 
 
+        }
+
+        private void Update()
+        {
+            if (LRInteract)
+            {
+                Vector3 point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, point);
+                //LRIndex starts at 1 since the position of the first vertex of the LR is at the object arrow
+                switch (CurrentRayIndex)
+                {
+                    case 0:
+                        switch (LRIndex)
+                        {
+                            case 1:
+                                if (CheckPointLocation(point, 0))
+                                {
+                                    CurrentRay.GetComponent<SetLRPoints>().SetNumLRPoints(3);
+                                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F));
+                                    LRIndex++;
+                                }
+                                break;
+
+
+                            case 2:
+                                if (CheckPointLocation(point, 1))
+                                {
+                                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, 1000 * (FocalPoint - new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F)));
+                                    onClick();
+                                }
+                                break;
+                        }
+                        break;
+
+                    case 1:
+                        CurrentRay.GetComponent<SetLRPoints>().SetNumLRPoints(2);
+                        if (CheckPointLocation(point, 0))
+                        {
+                            CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, 1000 * (OpticalElement.transform.position - new Vector3 (ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F)));
+                            onClick();
+                        }
+
+                        break;
+
+                }
+
+
+            }
         }
 
         // Update is called once per frame
@@ -141,7 +196,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                     OpticalCenterRay = Instantiate(ProgrammableALR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
                     OpticalCenterRay.GetComponent<SetPoints>().InitializeALR();
                     OpticalCenterRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F), 0);
-                    OpticalCenterRay.GetComponent<SetPoints>().SetLinePoint(1000 * (new Vector3(OpticalElement.transform.position.x, OpticalElement.transform.position.y) 
+                    OpticalCenterRay.GetComponent<SetPoints>().SetLinePoint(1000 * (new Vector3(OpticalElement.transform.position.x, OpticalElement.transform.position.y)
                                                                               - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F)), 100);
                     break;
 
@@ -149,7 +204,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                     FocalPointRay = Instantiate(ProgrammableALR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
                     FocalPointRay.GetComponent<SetPoints>().InitializeALR();
                     FocalPointRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F), 0);
-                
+
                     //This -57.3F is calculated from a different class. Since this is a demonstrative tutorial that has no user interaction, I'm just gonna go ahead and leave that value 
                     //hard coded here.
                     FocalPointRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(OpticalElement.transform.position.x, -57.3F), 2);
@@ -163,12 +218,46 @@ namespace DigitalRuby.AnimatedLineRenderer
                     break;
 
                 case 13:
+                    print(13);
                     GameObject[] ProgrammableALRS = GameObject.FindGameObjectsWithTag("ProgrammableALR");
                     for (int i = 0; i < ProgrammableALRS.Length; i++)
                     {
                         Destroy(ProgrammableALRS[i]);
                     }
                     break;
+
+                case 14:
+                    print(14);
+                    CurrentRay = Instantiate(ProgrammableLR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
+                    CurrentRay.GetComponent<SetLRPoints>().InitializeLR();
+                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(0, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F));
+                    CurrentRayIndex = 0;
+                    LRIndex = 1;
+                    LRInteract = true;
+                    break;
+
+                case 15:
+                    print(15);
+                    CurrentRay = Instantiate(ProgrammableLR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
+                    CurrentRay.GetComponent<SetLRPoints>().InitializeLR();
+                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(0, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F));
+                    CurrentRayIndex = 1;
+                    LRIndex = 1;
+                    LRInteract = true;
+                    break;
+
+                case 16:
+                    print(16);
+                    CurrentRay = Instantiate(ProgrammableLR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
+                    CurrentRay.GetComponent<SetLRPoints>().InitializeLR();
+                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(0, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F));
+                    CurrentRayIndex = 0;
+                    LRIndex = 1;
+                    LRInteract = true;
+                    break;
+
+
+
 
 
             }
@@ -181,5 +270,48 @@ namespace DigitalRuby.AnimatedLineRenderer
 
 
         }
+
+        bool CheckPointLocation(Vector3 point, int index)
+        {
+
+            Vector3[] CorrectPosition = CalculatePositions();
+            bool XCorrect = Mathf.Abs(point.x / CorrectPosition[index].x) < 1.01F && Mathf.Abs(point.x / CorrectPosition[index].x) > 0.99F;
+            bool YCorrect = Mathf.Abs(point.y / CorrectPosition[index].y) < 1.01F && Mathf.Abs(point.y / CorrectPosition[index].y) > 0.99F;
+            print(point.x + "||" + CorrectPosition[index].x + "||" + point.y + "||" + CorrectPosition[index].y + "||" + index);
+            if (XCorrect && YCorrect)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+
+
+
+
+        }
+        Vector3[] CalculatePositions()
+        {
+            Vector3[] points = new Vector3[2];
+
+            switch (CurrentRayIndex)
+            {
+                //Parallel Ray
+                case 0:
+                    points[0] = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F);
+                    points[1] = new Vector3(OpticalElement.transform.position.x + 12, OpticalElement.transform.position.y);
+                    break;
+                case 1:
+                    points[0] = OpticalElement.transform.position;
+                    points[1] = points[0];
+                    break;
+
+            }
+            return points;
+        }
     }
+
+
 }

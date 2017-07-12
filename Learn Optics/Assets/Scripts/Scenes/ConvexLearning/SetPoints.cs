@@ -8,10 +8,7 @@ namespace DigitalRuby.AnimatedLineRenderer
     public class SetPoints : MonoBehaviour
     {
         AnimatedLineRenderer RayRenderer;
-        void Start()
-        {
-
-        }
+        LineRenderer LineRenderer;
 
         public void InitializeALR()
         {
@@ -19,18 +16,13 @@ namespace DigitalRuby.AnimatedLineRenderer
             RayRenderer = GetComponent<AnimatedLineRenderer>();
 
         }
-        public void SetLinePoints(Vector3 From, Vector3 To, float duration)
-        {
-            RayRenderer.Enqueue(From);
-            RayRenderer.Enqueue(To, duration);
 
-
-        }
         public void SetLinePoint(Vector3 Point, float duration)
         {
             RayRenderer.Enqueue(Point, duration);
 
-
         }
+
+
     }
 }
