@@ -1,11 +1,15 @@
 fileFormatVersion: 2
 guid: 13bd2d9adb066d542bbde1818173e391
-timeCreated: 1499803925
+timeCreated: 1499953267
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - AnimatedLightEmitter: {fileID: 1112219451064534, guid: ec1f4403ec8ff5d42acd57348aa016a4,
+      type: 2}
+  - ProgrammableALR: {fileID: 1390023515752900, guid: 154955776fde7a04cbd4b6380c698892,
+      type: 2}
+  - ProgrammableLR: {fileID: 1883100266401984, guid: 469f155e1a9d5564a98a5d3033825a4d,
       type: 2}
   executionOrder: 0
   icon: {instanceID: 0}

@@ -37,8 +37,8 @@ namespace DigitalRuby.AnimatedLineRenderer
 
                 animatedLineRenderer.Enqueue(transform.position);
                 animatedLineRenderer.Enqueue(CalculateFinalPosition(), 0.5F);
-                animatedLineRenderer.Enqueue(new Vector3 (100, CalculateFinalPosition().y, CalculateFinalPosition().z), 4);
-                animatedLineRenderer.Enqueue(new Vector3 (1000, CalculateFinalPosition().y, CalculateFinalPosition().z), 1000);
+
+                animatedLineRenderer.Enqueue(new Vector3 (1000, CalculateFinalPosition().y, CalculateFinalPosition().z), 25);
 
             if (VirtualImage)
             {

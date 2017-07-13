@@ -18,6 +18,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         AnimatedLineRenderer VParallelRayALR;
         AnimatedLineRenderer VOpticalCenterRayALR;
         private bool isSelected;
+        private bool ControlsEnabled;
         private Vector3 origin;
         bool Quizzing;
 
@@ -33,35 +34,39 @@ namespace DigitalRuby.AnimatedLineRenderer
             VParallelRayALR = GameObject.Find("VirtualParallelRay").GetComponent<AnimatedLineRenderer>();
             VOpticalCenterRayALR = GameObject.Find("VirtualOpticalCenterRay").GetComponent<AnimatedLineRenderer>();
             origin = Camera.main.gameObject.transform.position;
+            ControlsEnabled = true;
             isSelected = false;
         }
         void Update()
         {
-            Quizzing = GameObject.Find("QuizToggle").GetComponent<Toggle>().isOn;
-
-            if (!Quizzing)
+            if (ControlsEnabled)
             {
-                if (Input.touchCount >= 1)
-                {
-                    checkSelected();
+                Quizzing = GameObject.Find("QuizToggle").GetComponent<Toggle>().isOn;
 
-                }
-                if (isSelected)
+                if (!Quizzing)
                 {
-                    Vector3 point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                    transform.position = new Vector3(point.x, origin.y + 2, 0);
-                    ResetALRs();
+                    if (Input.touchCount >= 1)
+                    {
+                        checkSelected();
 
-                }
-                if (Input.GetKey(KeyCode.LeftArrow))
-                {
-                    ResetALRs();
-                    transform.position -= new Vector3(0.5F, 0, 0);
-                }
-                if (Input.GetKey(KeyCode.RightArrow))
-                {
-                    ResetALRs();
-                    transform.position += new Vector3(0.5F, 0, 0);
+                    }
+                    if (isSelected)
+                    {
+                        Vector3 point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+                        transform.position = new Vector3(point.x, origin.y + 2, 0);
+                        ResetALRs();
+
+                    }
+                    if (Input.GetKey(KeyCode.LeftArrow))
+                    {
+                        ResetALRs();
+                        transform.position -= new Vector3(0.5F, 0, 0);
+                    }
+                    if (Input.GetKey(KeyCode.RightArrow))
+                    {
+                        ResetALRs();
+                        transform.position += new Vector3(0.5F, 0, 0);
+                    }
                 }
             }
             
@@ -91,6 +96,10 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 isSelected = false;
             }
+        }
+        public void UseControls(bool Enabled)
+        {
+            ControlsEnabled = Enabled;
         }
     }
 }
