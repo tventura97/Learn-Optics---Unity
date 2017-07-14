@@ -26,40 +26,17 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         void Start()
         {
-            ObjectArrow = GameObject.Find("ObjectArrow");
-            spriteRenderer = GetComponent<SpriteRenderer>();
-            FocalLength = 12;
-            Magnification = 1;
-            InitialScale = transform.localScale;
-            SpriteBounds = spriteRenderer.bounds.size.y;
-            origin = Camera.main.gameObject.transform.position;
-            OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
+            InitializeObjects();
         }
         //Note that all distances are relative to the lens, which is located at Root.transform.position
         void Update()
         {
-            Quizzing = GameObject.Find("QuizToggle").GetComponent<Toggle>().isOn;
-            ObjectDistance = GameObject.Find("Root").transform.position.x - GameObject.Find("ObjectArrow").transform.position.x;
-            ImageDistance = Mathf.Abs(1 / (1 / ObjectDistance - 1 / FocalLength));
-            Magnification = Mathf.Abs(ImageDistance / ObjectDistance);     // I multiply by the initial scale of the object because it doesn't start at 1. It's 1.25F, I think.
-            transform.localScale = new Vector3(InitialScale.x, Magnification, InitialScale.z);
+            CalculatePosition();
 
-            //If not quizzing
-            if (!Quizzing)
-            {
-                if (ObjectDistance < FocalLength)
-                {
-                    spriteRenderer.flipY = false;
-                    transform.position = new Vector3(GameObject.Find("Root").transform.position.x - ImageDistance, GameObject.Find("Root").transform.position.y + Magnification * 2, 0);
-                }
-                else
-                {
-                    spriteRenderer.flipY = true;
-                    transform.position = new Vector3(GameObject.Find("Root").transform.position.x + ImageDistance, GameObject.Find("Root").transform.position.y - Magnification * 2, 0);
-                }
-            }
+            /*
             else if (Quizzing)
             {
+                
                 if (Input.touchCount >= 1)
                 {
                     checkSelected();
@@ -101,14 +78,14 @@ namespace DigitalRuby.AnimatedLineRenderer
                         transform.position = new Vector3(point.x, origin.y - 2 * Magnification, 0);
                         spriteRenderer.flipY = true;
                     }
-                    */
+                    
 
                 }
-
+                
 
             }
+            */
         }
-
         private void checkSelected()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
@@ -128,6 +105,69 @@ namespace DigitalRuby.AnimatedLineRenderer
         {
             ObjectArrow.GetComponent<ObjectArrowControls>().ResetALRs();
         }
+
+        public void CalculatePosition()
+        {
+            ObjectDistance = GameObject.Find("Root").transform.position.x - GameObject.Find("ObjectArrow").transform.position.x;
+            ImageDistance = Mathf.Abs(1 / (1 / ObjectDistance - 1 / FocalLength));
+            Magnification = Mathf.Abs(ImageDistance / ObjectDistance);     // I multiply by the initial scale of the object because it doesn't start at 1. It's 1.25F, I think.
+            transform.localScale = new Vector3(InitialScale.x, Magnification, InitialScale.z);
+
+
+        }
+
+        public void SetPosition()
+        {
+            if (ObjectDistance < FocalLength)
+            {
+                spriteRenderer.flipY = false;
+                transform.position = new Vector3(GameObject.Find("Root").transform.position.x - (ImageDistance), GameObject.Find("Root").transform.position.y + Magnification * 2, 0);
+            }
+            else
+            {
+                spriteRenderer.flipY = true;
+                transform.position = new Vector3(GameObject.Find("Root").transform.position.x + (ImageDistance), GameObject.Find("Root").transform.position.y - Magnification * 2, 0);
+            }
+        }
+
+        public Vector3 GetPosition()
+        {
+            if (ObjectDistance < FocalLength)
+            {
+                spriteRenderer.flipY = false;
+                return new Vector3(GameObject.Find("Root").transform.position.x - ImageDistance, GameObject.Find("Root").transform.position.y + Magnification * 2, 0);
+            }
+            else
+            {
+                spriteRenderer.flipY = true;
+                return new Vector3(GameObject.Find("Root").transform.position.x + ImageDistance, GameObject.Find("Root").transform.position.y - Magnification * 2, 0);
+            }
+        }
+
+        public Vector3 GetScale()
+        {
+            return new Vector3(InitialScale.x, Magnification, InitialScale.z);
+            ;
+        }
+
+        public void InitializeObjects()
+        {
+            ObjectArrow = GameObject.Find("ObjectArrow");
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            FocalLength = 12;
+            Magnification = 1;
+            InitialScale = transform.localScale;
+            SpriteBounds = spriteRenderer.bounds.size.y;
+            origin = Camera.main.gameObject.transform.position;
+            OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
+            Quizzing = false;
+        }
+
+        public void SetPosition(Vector3 position)
+        {
+            transform.position = position;
+        }
     }
 }
+
 

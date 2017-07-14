@@ -87,8 +87,11 @@
     <Compile Include="Assets\AnimatedLRScript.cs" />
     <Compile Include="Assets\AnimatedLineRenderer\Scripts\AnimatedLineRenderer.cs" />
     <Compile Include="Assets\AnimatedLineRenderer\Scripts\PhasorScript.cs" />
+    <Compile Include="Assets\CalculateMagnification.cs" />
+    <Compile Include="Assets\CalculateThinLens.cs" />
     <Compile Include="Assets\CheckButton.cs" />
     <Compile Include="Assets\DebuggingText.cs" />
+    <Compile Include="Assets\ResetButton.cs" />
     <Compile Include="Assets\SandboxScene.cs" />
     <Compile Include="Assets\Scripts\OpticalProperties.cs" />
     <Compile Include="Assets\Scripts\Scenes\ConvexLearning\ImageArrow\ImageArrowGeneration.cs" />

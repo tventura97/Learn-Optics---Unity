@@ -18,7 +18,9 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void OnClick()
         {
-            if (GameObject.Find("QuizToggle").GetComponent<Toggle>().isOn)
+            ObjectArrow = GameObject.Find("ObjectArrow");
+            OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
+            if (true)//GameObject.Find("QuizToggle").GetComponent<Toggle>().isOn)
             {
                 ObjectArrow.transform.GetComponent<ObjectArrowControls>().ResetALRs();
                 ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 18.5F),
