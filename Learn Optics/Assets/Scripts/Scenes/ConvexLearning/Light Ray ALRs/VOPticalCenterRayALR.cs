@@ -12,6 +12,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         private GameObject Object;
         private bool VirtualImage;
         private float FocalLength;
+        private float LRScalingFactor;
 
         void Start()
         {
@@ -20,6 +21,9 @@ namespace DigitalRuby.AnimatedLineRenderer
             Object = GameObject.Find("ObjectArrow");
             FocalLength = 12;
             VirtualImage = false;
+            //This just extends the length of the linerenderer. LineRenderer draws a line from point a to point b. The functions used here only get the trajectory of the light beams.
+            //We need to extend the length of it or it won't be visible.
+            LRScalingFactor = 10000000;
         }
 
 

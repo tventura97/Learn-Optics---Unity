@@ -44,6 +44,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         Button ResetRaysButton;
         Button ThinLensButton;
         Button MagnificationButton;
+        Toggle PlaySceneToggle;
         Vector3 FocalPoint;
         Vector3 FocalPointLeft;
         string[] texts;
@@ -58,21 +59,15 @@ namespace DigitalRuby.AnimatedLineRenderer
         void Start()
         {
             InitializeObjects();
-            ObjectArrow.SetActive(false);
-            ImageArrow.SetActive(false);
-            ImageDistanceText.SetActive(false);
-            FocalPointMarkerHolder.SetActive(true);
-            FocalLengthBar.SetActive(false);
             FocalPoint = new Vector3(OpticalElement.transform.position.x + 12, OpticalElement.transform.position.y);
             FocalPointLeft = new Vector3(OpticalElement.transform.position.x - 12, OpticalElement.transform.position.y);
             LRInteract = false;
             LRIndex = 0;
-
             //How close the user can be to the correction position of the endpoint of the Light ray. Default is 5%
             ErrorTolerance = 0.015F;
 
             //Look I know this is a dumb way to initialize it but I'm lazy right now
-            texts = new string[] { "This is a convex, or converging, lens.", "It is called a converging lens because rays of light that pass through the lens converge at the lens' focal point.",
+            texts = new string[] { "Welcome to the Convex Lens Lesson.", "This is a convex, or converging, lens.", "It is called a converging lens because rays of light that pass through the lens converge at the lens' focal point.",
                 "To understand how light refracts through a convex lens,", "Imagine that the lens is really just a series of prisms stacked on top of each other.",
                 "When light passes through a prism, it always bends towards the base of the prism.", "These rays of light form images where they intersect.",
                 "This method of representing image formation is known as ray-tracing.", "To repeat this process, first draw a ray that propagates from the object, to the lens, parallel to the optical axis.",
@@ -90,8 +85,9 @@ namespace DigitalRuby.AnimatedLineRenderer
 
             promptPanelText = GameObject.Find("PromptPanelText");
             panelText = promptPanelText.GetComponent<Text>();
-            counter = 1;
-            panelText.text = texts[0];
+            counter = 0;
+            SetDefaults();
+            onClick();
 
 
         }
@@ -125,11 +121,6 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 return false;
             }
-
-
-
-
-
         }
         Vector3[] CalculatePositions()
         {
@@ -307,8 +298,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         private void InitializeObjects()
         {
             Root = GameObject.Find("Root");
-            GenerateRaysButton = GameObject.Find("GenerateRays").GetComponent<Button>();
-            ResetRaysButton = GameObject.Find("Reset").GetComponent<Button>();
+            GenerateRaysButton = GameObject.Find("GenerateRaysButton").GetComponent<Button>();
             MainCamera = GameObject.Find("Main Camera").GetComponent<Animator>();
             PrismHolder = GameObject.Find("PrismHolder").GetComponent<Animator>();
             ObjectArrow = GameObject.Find("ObjectArrow");
@@ -327,6 +317,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             GenerateQuizButton = GameObject.Find("GenerateQuizButton").GetComponent<Button>();
             ThinLensButton = GameObject.Find("CalculateThinLensButton").GetComponent<Button>();
             MagnificationButton = GameObject.Find("CalculateMagnificationButton").GetComponent<Button>();
+            PlaySceneToggle = GameObject.Find("PlaySceneToggle").GetComponent<Toggle>();
         }
 
         public void ClearInputFields()
@@ -341,24 +332,39 @@ namespace DigitalRuby.AnimatedLineRenderer
         }
         public void onClick()
         {
-
+            print(counter);
             switch (counter)
             {
+                case 0:
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Start";
+                    break;
                 case 1:
+                    //Disable all arrows for purpose of demonstration
+                    ObjectArrow.SetActive(false);
+                    ImageArrow.SetActive(false);
+                    ImageDistanceText.SetActive(false);
+                    FocalPointMarkerHolder.SetActive(true);
+                    FocalLengthBar.SetActive(false);
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Continue";
+
+                    break;
+
+                case 2:
                     //Spawn animated light emitters to demonstrate concept of converging at focal point
                     for (int i = -8; i <= 8; i += 4)
                     {
                         Instantiate(AnimatedLightEmitter, new Vector3(Root.transform.position.x - 80, Root.transform.position.y + i, 0), Quaternion.identity,
                             GameObject.FindGameObjectWithTag("OpticalElement").transform);
                     }
-                    break;
-
-                case 2:
-                    //Destroy animated light emitters
 
                     break;
 
+                //Empty cases need to be here because otherwise the prompt panel texts don't line up properly
                 case 3:
+                    break;
+
+                case 4:
+                    //Destroy animated light emitters
                     GameObject[] InitialAnimatedLightEmitters = GameObject.FindGameObjectsWithTag("AnimatedLightEmitter");
                     for (int i = 0; i < InitialAnimatedLightEmitters.Length; i++)
                     {
@@ -369,13 +375,13 @@ namespace DigitalRuby.AnimatedLineRenderer
                     PrismHolder.SetBool("triggerPrism", true);
                     break;
 
-                case 4:
+                case 5:
                     //Spawn two animated light emitters to demonstrate light bending through prisms.
                     Instantiate(AnimatedLightEmitter, new Vector3(Root.transform.position.x - 80, Root.transform.position.y + 6, 0), Quaternion.identity, Root.transform);
                     Instantiate(AnimatedLightEmitter, new Vector3(Root.transform.position.x - 80, Root.transform.position.y + 9, 0), Quaternion.identity, Root.transform);
                     break;
 
-                case 5:
+                case 6:
                     GameObject[] AnimatedLightEmitters = GameObject.FindGameObjectsWithTag("AnimatedLightEmitter");
                     for (int i = 0; i < AnimatedLightEmitters.Length; i++)
                     {
@@ -390,14 +396,14 @@ namespace DigitalRuby.AnimatedLineRenderer
                     ObjectArrow.transform.GetChild(1).gameObject.SetActive(false);
                     break;
 
-                case 6:
+                case 7:
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Continue";
                     ImageArrow.SetActive(true);
                     GenerateRaysButton.onClick.Invoke();
                     break;
 
-                case 7:
-                    ResetRaysButton.onClick.Invoke();
+                case 8:
+                    GenerateQuizButton.GetComponent<GenerateQuizScript>().DestroyAllLineRenderers();
                     ImageArrow.SetActive(false);
                     FocalPointMarkerHolder.SetActive(true);
                     ParallelRay = Instantiate(ProgrammableALR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
@@ -406,11 +412,11 @@ namespace DigitalRuby.AnimatedLineRenderer
                     ParallelRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F), 2);
                     break;
 
-                case 8:
+                case 9:
                     ParallelRay.GetComponent<SetPoints>().SetLinePoint(1000 * (FocalPoint - new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F)), 100);
                     break;
 
-                case 9:
+                case 10:
                     OpticalCenterRay = Instantiate(ProgrammableALR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
                     OpticalCenterRay.GetComponent<SetPoints>().InitializeALR();
                     OpticalCenterRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F), 0);
@@ -418,7 +424,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                                                                               - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F)), 100);
                     break;
 
-                case 10:
+                case 11:
                     FocalPointRay = Instantiate(ProgrammableALR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
                     FocalPointRay.GetComponent<SetPoints>().InitializeALR();
                     FocalPointRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F), 0);
@@ -427,15 +433,15 @@ namespace DigitalRuby.AnimatedLineRenderer
                     //hard coded here.
                     FocalPointRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(OpticalElement.transform.position.x, -57.3F), 2);
                     break;
-                case 11:
+                case 12:
                     FocalPointRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(100, -57.3F, 0), 2);
                     break;
 
-                case 12:
+                case 13:
                     ImageArrow.SetActive(true);
                     break;
 
-                case 13:
+                case 14:
                     print(13);
                     ObjectArrow.SetActive(true);
                     ObjectArrow.GetComponent<ObjectArrowControls>().UseControls(false);
@@ -450,7 +456,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                     transform.position -= new Vector3(0, 650, 0);
                     break;
 
-                case 14:
+                case 15:
                     //Insert focal length into input field
                     ImageArrow.SetActive(true);
                     FocalLengthBar.SetActive(true);
@@ -458,29 +464,29 @@ namespace DigitalRuby.AnimatedLineRenderer
                     break;
 
 
-                case 15:
+                case 16:
                     //Insert object distance into input field
                     ObjectDistanceIF.text = "24.0";
                     break;
 
-                case 16:
+                case 17:
                     //Insert image distance into input field
                     ImageDistanceText.SetActive(true);
                     ImageDistanceIF.text = "24.0";
                     break;
 
-                case 17:
+                case 18:
                     //Insert image and object distance into magnification input fields
                     mObjectDistanceIF.text = "24.0";
                     mImageDistanceIF.text = "-24.0";
                     break;
 
-                case 18:
+                case 19:
                     //Insert magnification into input field
                     MagnificationIF.text = "-1";
                     break;
 
-                case 19:
+                case 20:
                     //Reset parameters in preparation for interactive ray tracing tutorial
                     ClearInputFields();
                     EquationPanelAnimator.SetBool("toggleMenu", false);
@@ -488,11 +494,11 @@ namespace DigitalRuby.AnimatedLineRenderer
                     FocalLengthBar.SetActive(false);
                     break;
 
-                case 20:
+                case 21:
                     //Start interactive ray tracing tutorial
                     ImageArrow.GetComponent<Animator>().enabled = false;
                     ImageArrow.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
-                    GenerateQuizButton.onClick.Invoke();
+                    ObjectArrow.transform.SetPositionAndRotation(new Vector3(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.y + 2), Quaternion.identity);
                     transform.GetChild(0).gameObject.SetActive(false);
                     ImageDistanceText.SetActive(false);
                     InitializeLineRenderers();
@@ -500,60 +506,60 @@ namespace DigitalRuby.AnimatedLineRenderer
                     LRInteract = true;
                     break;
 
-                case 21:
+                case 22:
                     InitializeLineRenderers();
                     LRInteract = true;
                     CurrentRayIndex = 1;
                     break;
 
-                case 22:
+                case 23:
                     InitializeLineRenderers();
                     LRInteract = true;
                     CurrentRayIndex = 2;
                     break;
 
-                case 23:
+                case 24:
                     //Image forms
                     transform.GetChild(0).gameObject.SetActive(true);
                     ImageArrow.GetComponent<ImageArrowGeneration>().SetPosition();
                     break;
 
-                case 24:
+                case 25:
                     //Begin calculation of values
                     EquationPanelAnimator.SetBool("toggleMenu", true);
                     transform.position -= new Vector3(0, 650, 0);
                     break;
 
-                case 25:
+                case 26:
                     FocalLengthBar.SetActive(true);
                     break;
 
-                case 26:
+                case 27:
                     ObjectDistanceIF.text = Mathf.Abs(ObjectArrow.transform.localPosition.x).ToString("F1");
                     FocalLengthIF.text = "12.0";
                     break;
 
-                case 27:
+                case 28:
                     FocalLengthBar.SetActive(false);
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Calculate";
                     break;
 
-                case 28:
+                case 29:
                     ThinLensButton.onClick.Invoke();
                     ImageDistanceText.SetActive(true);
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Continue";
                     break;
 
-                case 29:
+                case 30:
                     break;
 
-                case 30:
+                case 31:
                     mObjectDistanceIF.text = Mathf.Abs(ObjectArrow.transform.localPosition.x).ToString("F1");
                     mImageDistanceIF.text = ImageDistanceIF.text;
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Calculate";
                     break;
 
-                case 31:
+                case 32:
                     MagnificationButton.onClick.Invoke();
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Continue";
                     GameObject[] FinalProgrammableALRS = GameObject.FindGameObjectsWithTag("ProgrammableALR");
@@ -563,6 +569,8 @@ namespace DigitalRuby.AnimatedLineRenderer
                     }
                     EquationPanelAnimator.SetBool("toggleMenu", false);
                     transform.position -= new Vector3(0, 6500, 0);
+                    SetDefaults();
+                    PlaySceneToggle.onValueChanged.Invoke(false);
                     break;
             }
 
@@ -575,6 +583,15 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         }
 
+        public void SetDefaults()
+        {
+            //Sets default settings for active state of all objects
+            ObjectArrow.SetActive(true);
+            ImageArrow.SetActive(true);
+            ImageDistanceText.SetActive(true);
+            FocalPointMarkerHolder.SetActive(true);
+            FocalLengthBar.SetActive(false);
+        }
 
     }
 }

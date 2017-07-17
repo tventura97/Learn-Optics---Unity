@@ -41,8 +41,6 @@ namespace DigitalRuby.AnimatedLineRenderer
         {
             if (ControlsEnabled)
             {
-                Quizzing = GameObject.Find("QuizToggle").GetComponent<Toggle>().isOn;
-
                 if (!Quizzing)
                 {
                     if (Input.touchCount >= 1)

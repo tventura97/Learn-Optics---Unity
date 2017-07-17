@@ -18,14 +18,6 @@ namespace DigitalRuby.AnimatedLineRenderer
             OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
         }
 
-        void Update()
-        {
-            if (!QuizToggle.GetComponent<Toggle>().isOn)
-            {
-                enabled = false;
-            }
-        }
-
         public void OnClick()
         {
             if (Mathf.Abs((OpticalElement.transform.position.x - ImageArrow.transform.position.x) / ImageArrow.GetComponent<ImageArrowGeneration>().ImageDistance) > 0.98F

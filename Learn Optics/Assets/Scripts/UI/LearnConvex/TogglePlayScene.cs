@@ -1,17 +1,42 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class TogglePlayScene : MonoBehaviour {
+namespace DigitalRuby.AnimatedLineRenderer
+{
+    [RequireComponent(typeof(AnimatedLineRenderer))]
+    public class TogglePlayScene : MonoBehaviour
+    {
 
-	GameObject ScenePanel;
+        GameObject ScenePanel;
+        GameObject ObjectArrow;
+        GameObject ImageArrow;
+        GameObject ImageDistanceText;
+        Toggle PlaySceneToggle;
 
-	void Start () {
-		ScenePanel = GameObject.Find ("PromptPanel");
-	}
-	
-	public void OnToggle () {
-		ScenePanel.SetActive (!ScenePanel.activeSelf);
-        
-	}
+        void Start()
+        {
+            ScenePanel = GameObject.Find("PromptPanel");
+            PlaySceneToggle = GetComponent<Toggle>();
+            ObjectArrow = GameObject.FindGameObjectWithTag("ObjectArrow");
+            ImageArrow = GameObject.Find("ImageArrow");
+
+        }
+
+
+        public void OnToggle()
+        {
+            ScenePanel.GetComponent<PlayConvexLearningScene>().SetDefaults();
+            ScenePanel.SetActive(!ScenePanel.activeSelf);
+            //If the toggle is disabled, turn on the Image/Object Arrows
+            ObjectArrow.SetActive(!PlaySceneToggle.isOn);
+            ImageArrow.SetActive(!PlaySceneToggle.isOn);
+            if (PlaySceneToggle.isOn)
+            {
+                GameObject.Find("GenerateQuizButton").GetComponent<GenerateQuizScript>().DestroyAllLineRenderers();
+            }
+        }
+    }
+
 }

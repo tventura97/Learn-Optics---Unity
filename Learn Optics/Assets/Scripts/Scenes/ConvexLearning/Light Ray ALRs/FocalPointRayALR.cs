@@ -16,13 +16,16 @@ namespace DigitalRuby.AnimatedLineRenderer
         private GameObject OpticalElement;
         private Vector3 FocalPointLeft;
         public bool VirtualImage;
+        private float LRScalingFactor;
 
         private void Start()
         {
             animatedLineRenderer = GetComponent<AnimatedLineRenderer>();
             OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
             FocalLength = 12;
-
+            //This just extends the length of the linerenderer. LineRenderer draws a line from point a to point b. The functions used here only get the trajectory of the light beams.
+            //We need to extend the length of it or it won't be visible.
+            LRScalingFactor = 10000000;
         }
         void Update()
         {

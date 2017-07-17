@@ -90,7 +90,11 @@
     <Compile Include="Assets\CalculateMagnification.cs" />
     <Compile Include="Assets\CalculateThinLens.cs" />
     <Compile Include="Assets\CheckButton.cs" />
+    <Compile Include="Assets\ConcaveLearningScript.cs" />
     <Compile Include="Assets\DebuggingText.cs" />
+    <Compile Include="Assets\EquationPanelButtonScript.cs" />
+    <Compile Include="Assets\GenerateQuizScript.cs" />
+    <Compile Include="Assets\PlaySceneToggleScript.cs" />
     <Compile Include="Assets\ResetButton.cs" />
     <Compile Include="Assets\SandboxScene.cs" />
     <Compile Include="Assets\Scripts\OpticalProperties.cs" />
@@ -123,6 +127,7 @@
     <Compile Include="Assets\Scripts\UI\Sliders\Slider_NIndex.cs" />
     <Compile Include="Assets\Scripts\UI\Sliders\Slider_RoC.cs" />
     <Compile Include="Assets\SetLRPoints.cs" />
+    <Compile Include="Assets\TestToggle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\AnimatedLineRenderer\Readme.txt" />

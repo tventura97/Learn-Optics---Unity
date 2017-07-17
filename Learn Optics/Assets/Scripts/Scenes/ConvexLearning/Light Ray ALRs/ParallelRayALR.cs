@@ -14,6 +14,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         private Vector3 FocalPoint;
         private RaycastHit hit;
         private GameObject OpticalElement;
+        private float LRScalingFactor;
         public bool VirtualImage;
 
         private void Start()
@@ -22,7 +23,9 @@ namespace DigitalRuby.AnimatedLineRenderer
             OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
             FocalLength = 12;
             FocalPoint = new Vector3(OpticalElement.transform.position.x + FocalLength, OpticalElement.transform.position.y, OpticalElement.transform.position.z);
-
+            //This just extends the length of the linerenderer. LineRenderer draws a line from point a to point b. The functions used here only get the trajectory of the light beams.
+            //We need to extend the length of it or it won't be visible.
+            LRScalingFactor = 10000000;
         }
 
         public void onClick()
@@ -32,7 +35,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                 animatedLineRenderer.Enqueue(transform.position);
                 animatedLineRenderer.Enqueue(CalculateFinalPosition(), 0.5F);
                 animatedLineRenderer.Enqueue(FocalPoint, 0.5F);
-                animatedLineRenderer.Enqueue(1000 * (FocalPoint - CalculateFinalPosition()), 100);
+                animatedLineRenderer.Enqueue(LRScalingFactor * (FocalPoint - CalculateFinalPosition()), 100);
 
             
         }
@@ -40,7 +43,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         private void DebugLines()
         {
             Debug.DrawRay(transform.position, new Vector3 (OpticalElement.transform.position.x, hit.point.y, hit.point.z) - transform.position);
-            Debug.DrawRay(new Vector3(OpticalElement.transform.position.x, hit.point.y, hit.point.z), 100 * (FocalPoint - new Vector3(OpticalElement.transform.position.x, hit.point.y, hit.point.z)));
+            Debug.DrawRay(new Vector3(OpticalElement.transform.position.x, hit.point.y, hit.point.z), LRScalingFactor * (FocalPoint - new Vector3(OpticalElement.transform.position.x, hit.point.y, hit.point.z)));
         }
 
         private Vector3 CalculateFinalPosition()

@@ -24,10 +24,6 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void OnToggle()
         {
-            //Maybe just call the scene panel script here
-
-            PlayScene.GetComponent<TogglePlayScene>().OnToggle();
-            GenerateQuizButton.SetActive(quizToggle.isOn);
 
         }
     }

@@ -16,6 +16,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         private RaycastHit hit;
         private GameObject OpticalElement;
         public bool VirtualImage;
+        private float LRScalingFactor; 
 
         private void Start()
         {
@@ -24,7 +25,9 @@ namespace DigitalRuby.AnimatedLineRenderer
             FocalLength = 12;
             FocalPoint = new Vector3(OpticalElement.transform.position.x + FocalLength, OpticalElement.transform.position.y, OpticalElement.transform.position.z);
             VirtualImage = false;
-
+            //This just extends the length of the linerenderer. LineRenderer draws a line from point a to point b. The functions used here only get the trajectory of the light beams.
+            //We need to extend the length of it or it won't be visible.
+            LRScalingFactor = 10000000;
         }
 
         private void Update()
@@ -46,14 +49,14 @@ namespace DigitalRuby.AnimatedLineRenderer
                 animatedLineRenderer.Reset();
                 animatedLineRenderer.Enqueue(transform.position);
                 animatedLineRenderer.Enqueue(CalculateFinalPosition(), 0.5F);
-                animatedLineRenderer.Enqueue(1000 * (CalculateFinalPosition() - FocalPoint), 100);
+                animatedLineRenderer.Enqueue(LRScalingFactor * (CalculateFinalPosition() - FocalPoint), 100);
             }
         }
 
         private void DebugLines()
         {
             Debug.DrawRay(transform.position, new Vector3(OpticalElement.transform.position.x, hit.point.y, hit.point.z) - transform.position);
-            Debug.DrawRay(new Vector3(OpticalElement.transform.position.x, hit.point.y, hit.point.z), 100 * (FocalPoint - new Vector3(OpticalElement.transform.position.x, hit.point.y, hit.point.z)));
+            Debug.DrawRay(new Vector3(OpticalElement.transform.position.x, hit.point.y, hit.point.z), LRScalingFactor * (FocalPoint - new Vector3(OpticalElement.transform.position.x, hit.point.y, hit.point.z)));
         }
 
         private Vector3 CalculateFinalPosition()
