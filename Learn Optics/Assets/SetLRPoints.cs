@@ -11,8 +11,8 @@ public class SetLRPoints : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.useWorldSpace = true;
-        lineRenderer.startWidth = 0.25F;
-        lineRenderer.endWidth = 0.25F;
+        lineRenderer.startWidth = 0.2F;
+        lineRenderer.endWidth = 0.2F;
 
     }
 
@@ -30,8 +30,8 @@ public class SetLRPoints : MonoBehaviour
     {
         if (isVisible)
         {
-            lineRenderer.startWidth = 0.25F;
-            lineRenderer.endWidth = 0.25F;
+            lineRenderer.startWidth = 0.2F;
+            lineRenderer.endWidth = 0.2F;
         }
         else if (!isVisible)
         {

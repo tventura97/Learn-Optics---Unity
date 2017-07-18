@@ -23,6 +23,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             ObjectArrow = GameObject.FindGameObjectWithTag("ObjectArrow");
             ImageArrow = GameObject.Find("ImageArrow");
             CameraAnimator = GameObject.Find("Main Camera").GetComponent<Animator>();
+            print("Objects Successfully Initialized");
         }
 
         private void Update()
@@ -32,7 +33,7 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void OnToggle()
         {
-            ScenePanel.GetComponent<PlayConvexLearningScene>().SetDefaults();
+            ScenePanel.GetComponent<ConcaveLearningScript>().SetDefaults();
             ScenePanel.SetActive(!ScenePanel.activeSelf);
             //If the toggle is disabled, turn on the Image/Object Arrows
             ObjectArrow.SetActive(!PlaySceneToggle.isOn);
