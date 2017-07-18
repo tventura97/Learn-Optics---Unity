@@ -69,7 +69,6 @@ namespace DigitalRuby.AnimatedLineRenderer
         }
         private void Update()
         {
-            print(CalculateFinalConcavePosition());
             if (isInteractable)
             {
                 Interact();
@@ -376,9 +375,16 @@ namespace DigitalRuby.AnimatedLineRenderer
         private Vector3 CalculateFinalConcavePosition()
         {
             float FinalX = OpticalElement.transform.position.x;
-            float FinalY = (CurrentRay.transform.position.x - OpticalElement.transform.position.x) / Mathf.Tan(Mathf.Deg2Rad * AngleBetween(FocalPoint - new Vector3(
-                OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F) , Vector3.down));
-            print(FinalY);
+            float FinalY;
+            if (CurrentRay != null)
+            {
+                FinalY = (CurrentRay.transform.position.x - OpticalElement.transform.position.x) / Mathf.Tan(Mathf.Deg2Rad * AngleBetween(FocalPoint - new Vector3(
+                    OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F), Vector3.down));
+            }
+            else
+            {
+                FinalY = 0;
+            }
             return new Vector3(FinalX, FinalY);
 
         }
