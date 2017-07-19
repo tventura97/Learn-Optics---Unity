@@ -33,6 +33,7 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void OnToggle()
         {
+            GameObject.Find("GenerateQuizButton").GetComponent<GenerateQuizScript>().SetPlayScene(PlaySceneToggle.isOn);
             ScenePanel.GetComponent<ConcaveLearningScript>().SetDefaults();
             ScenePanel.SetActive(!ScenePanel.activeSelf);
             //If the toggle is disabled, turn on the Image/Object Arrows

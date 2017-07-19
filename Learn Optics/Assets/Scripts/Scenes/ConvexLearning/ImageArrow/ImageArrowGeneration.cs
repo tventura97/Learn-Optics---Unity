@@ -15,6 +15,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         public float ObjectDistance;
         public float ImageDistance;
         public float Magnification;
+        public bool isConcave;
         float SpriteBounds;
         private Vector3 InitialScale;
         private SpriteRenderer spriteRenderer;
@@ -31,7 +32,6 @@ namespace DigitalRuby.AnimatedLineRenderer
         //Note that all distances are relative to the lens, which is located at Root.transform.position
         void Update()
         {
-            CalculatePosition();
 
             /*
             else if (Quizzing)
@@ -108,40 +108,61 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void CalculatePosition()
         {
-            ObjectDistance = GameObject.Find("Root").transform.position.x - GameObject.Find("ObjectArrow").transform.position.x;
+            ObjectDistance = OpticalElement.transform.position.x - ObjectArrow.transform.position.x;
+            if (isConcave)
+            {
+                FocalLength = -1 * Mathf.Abs(FocalLength);
+            }
             ImageDistance = Mathf.Abs(1 / (1 / ObjectDistance - 1 / FocalLength));
-            Magnification = Mathf.Abs(ImageDistance / ObjectDistance);     // I multiply by the initial scale of the object because it doesn't start at 1. It's 1.25F, I think.
+            Magnification = InitialScale.y * Mathf.Abs(ImageDistance / ObjectDistance);     
             transform.localScale = new Vector3(InitialScale.x, Magnification, InitialScale.z);
-
 
         }
 
         public void SetPosition()
         {
-            if (ObjectDistance < FocalLength)
+            if (isConcave)
             {
                 spriteRenderer.flipY = false;
-                transform.position = new Vector3(GameObject.Find("Root").transform.position.x - (ImageDistance), GameObject.Find("Root").transform.position.y + Magnification * 2, 0);
+                transform.position = new Vector3(OpticalElement.transform.position.x - ImageDistance, OpticalElement.transform.position.y + Magnification * 2);
             }
             else
             {
-                spriteRenderer.flipY = true;
-                transform.position = new Vector3(GameObject.Find("Root").transform.position.x + (ImageDistance), GameObject.Find("Root").transform.position.y - Magnification * 2, 0);
+                if (ObjectDistance < FocalLength)
+                {
+                    spriteRenderer.flipY = false;
+                    transform.position = new Vector3(GameObject.Find("Root").transform.position.x - (ImageDistance), GameObject.Find("Root").transform.position.y + Magnification * 2, 0);
+                }
+                else
+                {
+                    spriteRenderer.flipY = true;
+
+                }
             }
         }
 
         public Vector3 GetPosition()
         {
-            if (ObjectDistance < FocalLength)
+            if (isConcave)
             {
                 spriteRenderer.flipY = false;
-                return new Vector3(GameObject.Find("Root").transform.position.x - ImageDistance, GameObject.Find("Root").transform.position.y + Magnification * 2, 0);
+                return new Vector3(OpticalElement.transform.position.x - ImageDistance, OpticalElement.transform.position.y + Magnification * 2);
             }
             else
             {
-                spriteRenderer.flipY = true;
-                return new Vector3(GameObject.Find("Root").transform.position.x + ImageDistance, GameObject.Find("Root").transform.position.y - Magnification * 2, 0);
+
+                if (ObjectDistance < FocalLength)
+                {
+                    spriteRenderer.flipY = false;
+                    return new Vector3(GameObject.Find("Root").transform.position.x - ImageDistance, GameObject.Find("Root").transform.position.y + Magnification * 2, 0);
+                }
+                else
+                {
+                    spriteRenderer.flipY = true;
+                    return new Vector3(GameObject.Find("Root").transform.position.x + ImageDistance, GameObject.Find("Root").transform.position.y - Magnification * 2, 0);
+                }
             }
+
         }
 
         public Vector3 GetScale()

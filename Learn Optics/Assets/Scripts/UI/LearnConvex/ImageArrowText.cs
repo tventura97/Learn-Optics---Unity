@@ -8,6 +8,7 @@ public class ImageArrowText : MonoBehaviour
     GameObject ImageArrow;
     GameObject OpticalElement;
     TextMesh ImageArrowTextMesh;
+    public bool isConcave;
 
     void Start()
     {
@@ -28,6 +29,5 @@ public class ImageArrowText : MonoBehaviour
             transform.position = new Vector3(ImageArrow.transform.position.x, OpticalElement.transform.position.y - 0.75F);
         }
         ImageArrowTextMesh.text = "di = " + (transform.position.x - OpticalElement.transform.position.x).ToString("F1");
-
     }
 }

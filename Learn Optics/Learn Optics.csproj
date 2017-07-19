@@ -94,6 +94,7 @@
     <Compile Include="Assets\DebuggingText.cs" />
     <Compile Include="Assets\EquationPanelButtonScript.cs" />
     <Compile Include="Assets\GenerateQuizScript.cs" />
+    <Compile Include="Assets\LoadConcaveScene.cs" />
     <Compile Include="Assets\PlaySceneToggleScript.cs" />
     <Compile Include="Assets\ResetButton.cs" />
     <Compile Include="Assets\SandboxScene.cs" />
