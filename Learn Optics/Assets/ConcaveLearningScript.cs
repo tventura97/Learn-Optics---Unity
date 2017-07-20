@@ -44,6 +44,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         Button ResetRaysButton;
         Button ThinLensButton;
         Button MagnificationButton;
+        Button ResetInputFields;
         Toggle PlaySceneToggle;
         Vector3 FocalPoint;
         Vector3 FocalPointLeft;
@@ -66,7 +67,11 @@ namespace DigitalRuby.AnimatedLineRenderer
                     "These rays of light form virtual images.", "These images are called virtual because light beams diverge from them rather than converge at them.", "Your brain " +
                     "assumes that the light rays originate from a point in front of the actual object.", "You will see an image at the point it thinks the light rays would have emanated from.", "This method of image formation is known as ray-tracing.",
                     "To repeat this process, first draw a ray that is parallel to the optical axis.", "This will diverge from the left focal point.", "Next, draw a ray that passes through the optical center. This will emerge undeviated.",
-                    "Finally, draw a ray that approaches the right focal point of the lens.", "This will emerge parallel to the optical axis.", "TRACE RAYS BACKWARDS, INSERT MORE APPROPRIATE DIALOGUE HERE", "" };
+                    "Finally, draw a ray that approaches the right focal point of the lens.", "This will emerge parallel to the optical axis.", "TRACE RAYS BACKWARDS, INSERT MORE APPROPRIATE DIALOGUE HERE", "The image is always upright, virtual, and in front of the object.",
+                    "We can now use the thin lens equation to calculate the position of the image.", "For a concave lens, the focal length is always negative. This particular lens has a focal length of -12m.", "The object distance is known, at 24.0m",
+                    "Using these values, we can calculate the image distance.", "Since the image and object are on the same side of the lens, the image distance is negative. It is located at -8.0m.", "We can use these values to calulate lateral magnification, which is the negative ratio of " +
+                    "image distance and object distance.", "Simply plug in the object distance and image distance to calculate the magnification." };
+
 
             panelText.text = texts[0];
             SetDefaults();
@@ -311,37 +316,89 @@ namespace DigitalRuby.AnimatedLineRenderer
                 case 21:
                     //Input Object distance in InputField
                     ObjectDistanceIF.text = Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x).ToString("F1");
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Calculate";
                     break;
 
                 case 22:
                     //Calculate Image distance
                     ThinLensButton.onClick.Invoke();
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Continue";
                     break;
 
                 case 23:
-                    //Input Object distance in Magnification InputField
-                    mObjectDistanceIF.text = ObjectDistanceIF.text;
+                    //Advance dialogue
                     break;
 
-                case 24:
+                case 24:                    
+                    //Input Object distance in Magnification InputField
+                    mObjectDistanceIF.text = ObjectDistanceIF.text;
                     //Input Image distance in Magnification InputField
                     mImageDistanceIF.text = ImageDistanceIF.text;
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Calculate";
                     break;
 
                 case 25:
                     //Calculate Lateral Magnification
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Continue";
                     MagnificationButton.onClick.Invoke();
                     break;
 
                 case 26:
-                    //Begin example
-                    //Set play scene bool to false so that the quiz button thinks the scene isn't playing
+                    //Begin demo example
+                    ResetInputFields.onClick.Invoke();
+                    EquationPanelAnimator.SetBool("toggleMenu", false);
+                    transform.position += new Vector3(0, 650, 0);
                     GameObject.Find("GenerateQuizButton").GetComponent<GenerateQuizScript>().SetPlayScene(false);
                     GenerateQuizButton.onClick.Invoke();
-             
                     break;
 
-            
+                case 27:
+                    //Bring down equation panel, start to pull values from scene
+                    EquationPanelAnimator.SetBool("toggleMenu", true);
+                    transform.position -= new Vector3(0, 650, 0);
+                    break;
+
+                case 28:
+                    //Pull focal length and object distance
+
+                    //Input focal length in InputField
+                    FocalLengthIF.text = "-12";
+                    //Input Object distance in InputField
+                    ObjectDistanceIF.text = Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x).ToString("F1");
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Calculate";
+                    break;
+
+                case 29:
+                    //Calculate
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Continue";
+                    ThinLensButton.onClick.Invoke();
+                    break;
+
+                case 30:
+                    //Pull magnification values
+                    //Input Object distance in Magnification InputField
+                    mObjectDistanceIF.text = ObjectDistanceIF.text;
+
+                    //Input Image distance in Magnification InputField
+                    mImageDistanceIF.text = ImageDistanceIF.text;
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Calculate";
+                    break;
+
+                case 31:
+                    //Calculate
+                    MagnificationButton.onClick.Invoke();
+                    transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "End";                
+                    break;
+
+                case 32:
+                    ResetInputFields.onClick.Invoke();
+                    //Move panel out of sight
+                    transform.position = new Vector3(0, 0, 0);
+                    //Move equation panel back up
+                    EquationPanelAnimator.SetBool("toggleMenu", false);
+                    PlaySceneToggle.onValueChanged.Invoke(false);
+                    break;
+                    //END
 
             }
 
@@ -381,6 +438,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             MagnificationButton = GameObject.Find("CalculateMagnificationButton").GetComponent<Button>();
             PlaySceneToggle = GameObject.Find("PlaySceneToggle").GetComponent<Toggle>();
             panelText = GameObject.Find("PromptPanelText").GetComponent<Text>();
+            ResetInputFields = GameObject.Find("ResetButton").GetComponent<Button>();
             print("Objects Successfully Initialized");
         }
 
