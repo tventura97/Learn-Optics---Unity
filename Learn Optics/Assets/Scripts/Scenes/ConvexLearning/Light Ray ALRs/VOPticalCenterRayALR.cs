@@ -9,7 +9,7 @@ namespace DigitalRuby.AnimatedLineRenderer
     {
         private AnimatedLineRenderer animatedLineRenderer;
         private GameObject OpticalElement;
-        private GameObject Object;
+        private GameObject ObjectArrow;
         private bool VirtualImage;
         private float FocalLength;
         private float LRScalingFactor;
@@ -18,7 +18,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         {
             animatedLineRenderer = GetComponent<AnimatedLineRenderer>();
             OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
-            Object = GameObject.Find("ObjectArrow");
+            ObjectArrow = GameObject.Find("ObjectArrow");
             FocalLength = 12;
             VirtualImage = false;
             //This just extends the length of the linerenderer. LineRenderer draws a line from point a to point b. The functions used here only get the trajectory of the light beams.
@@ -29,7 +29,7 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         void Update()
         {
-            if (Mathf.Abs(Object.transform.position.x - OpticalElement.transform.position.x) < FocalLength)
+            if (Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x) < FocalLength)
             {
                 VirtualImage = true;
             }

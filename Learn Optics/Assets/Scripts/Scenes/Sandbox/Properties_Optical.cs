@@ -13,6 +13,8 @@ public class Properties_Optical : MonoBehaviour
     //Is this object a mirror? Default is false
     public bool isReflective = false;
     public bool isCurved = true;
+    public bool isConcaveReflective;
+    public bool isConvexReflective;
     //Distance moved on keypress
     private float movementDistance;
     public static int gottem;

@@ -13,9 +13,6 @@ namespace DigitalRuby.AnimatedLineRenderer
         public GameObject AnimatedLightEmitter;
         public GameObject ProgrammableALR;
         public GameObject ProgrammableLR;
-        public Material Laser;
-        public Material GreenLaser;
-        public Material ParticleLaser;
         GameObject promptPanelText;
         GameObject ObjectArrow;
         GameObject ImageArrow;

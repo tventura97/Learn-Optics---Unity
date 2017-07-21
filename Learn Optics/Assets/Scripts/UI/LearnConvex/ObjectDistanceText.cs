@@ -9,11 +9,12 @@ public class ObjectDistanceText : MonoBehaviour
 
     void Start()
     {
-        OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
-        ObjectDistanceTextMesh = GetComponent<TextMesh>();
+
     }
     void Update()
     {
+        OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
+        ObjectDistanceTextMesh = GetComponent<TextMesh>();
         ObjectDistanceTextMesh.text = "do = " + (OpticalElement.transform.position.x - transform.parent.position.x).ToString("F1");
     }
 }

@@ -23,7 +23,6 @@ namespace DigitalRuby.AnimatedLineRenderer
             ObjectArrow = GameObject.FindGameObjectWithTag("ObjectArrow");
             ImageArrow = GameObject.Find("ImageArrow");
             CameraAnimator = GameObject.Find("Main Camera").GetComponent<Animator>();
-            print("Objects Successfully Initialized");
         }
 
         private void Update()

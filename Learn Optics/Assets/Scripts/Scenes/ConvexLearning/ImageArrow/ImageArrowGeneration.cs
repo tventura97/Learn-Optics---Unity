@@ -16,6 +16,9 @@ namespace DigitalRuby.AnimatedLineRenderer
         public float ImageDistance;
         public float Magnification;
         public bool isConcave;
+        public bool isReflective;
+        public bool isConcaveReflective;
+        public bool isConvexReflective;
         float SpriteBounds;
         private Vector3 InitialScale;
         private SpriteRenderer spriteRenderer;
@@ -28,63 +31,19 @@ namespace DigitalRuby.AnimatedLineRenderer
         void Start()
         {
             InitializeObjects();
+            
         }
+
         //Note that all distances are relative to the lens, which is located at Root.transform.position
         void Update()
         {
+            //Keep this in update because in the learn mirrors scene, the optical element will change at runtime, so these need to be updated.
+            ObjectArrow = GameObject.Find("ObjectArrow");
+            OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
+            FocalLength = Mathf.Abs(GameObject.Find("F1").transform.position.x - OpticalElement.transform.position.x);
+            isConcaveReflective = GameObject.FindGameObjectWithTag("OpticalElement").GetComponent<Properties_Optical>().isConcaveReflective;
+            isConvexReflective = GameObject.FindGameObjectWithTag("OpticalElement").GetComponent<Properties_Optical>().isConvexReflective;
 
-            /*
-            else if (Quizzing)
-            {
-                
-                if (Input.touchCount >= 1)
-                {
-                    checkSelected();
-
-                }
-                if (true)
-                {
-                    if (Input.GetKey(KeyCode.LeftArrow))
-                    {
-                        transform.position -= new Vector3(0.5F, 0, 0);
-                    }
-                    if (Input.GetKey(KeyCode.RightArrow))
-                    {
-                        transform.position += new Vector3(0.5F, 0, 0);
-                    }
-                    if (transform.position.x - OpticalElement.transform.position.x < 0)
-                    {
-                        transform.position = new Vector3(transform.position.x, OpticalElement.transform.position.y + 2 * Magnification, 0);
-
-                        spriteRenderer.flipY = false;
-                    }
-
-                    else if (transform.position.x - OpticalElement.transform.position.x >= 0)
-                    {
-                        transform.position = new Vector3(transform.position.x, OpticalElement.transform.position.y - 2 * Magnification, 0);
-                        spriteRenderer.flipY = true;
-                    }
-                    //Touch Controls
-                    /*
-                    if (transform.position.x - OpticalElement.transform.position.x < 0)
-                    {
-                        Vector3 point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                        transform.position = new Vector3(point.x, origin.y + 2 * Magnification, 0);
-                        spriteRenderer.flipY = false;
-                    }
-                    else if (transform.position.x - OpticalElement.transform.position.x >= 0)
-                    {
-                        Vector3 point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                        transform.position = new Vector3(point.x, origin.y - 2 * Magnification, 0);
-                        spriteRenderer.flipY = true;
-                    }
-                    
-
-                }
-                
-
-            }
-            */
         }
         private void checkSelected()
         {
@@ -108,35 +67,63 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void CalculatePosition()
         {
+            ObjectArrow = GameObject.Find("ObjectArrow");
+            OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
             ObjectDistance = OpticalElement.transform.position.x - ObjectArrow.transform.position.x;
             if (isConcave)
             {
                 FocalLength = -1 * Mathf.Abs(FocalLength);
             }
+
             ImageDistance = Mathf.Abs(1 / (1 / ObjectDistance - 1 / FocalLength));
             Magnification = InitialScale.y * Mathf.Abs(ImageDistance / ObjectDistance);     
             transform.localScale = new Vector3(InitialScale.x, Magnification, InitialScale.z);
-
         }
 
         public void SetPosition()
         {
-            if (isConcave)
+            //if mirror
+            if(isReflective)
             {
-                spriteRenderer.flipY = false;
-                transform.position = new Vector3(OpticalElement.transform.position.x - ImageDistance, OpticalElement.transform.position.y + Magnification * 2);
+                //If concave mirror
+                if (isConcaveReflective)
+                {
+                    spriteRenderer.flipY = true;
+                    transform.position = new Vector3(OpticalElement.transform.position.x - ImageDistance, OpticalElement.transform.position.y - Magnification * 1.89F);
+                }
+
+                //if convex mirror
+                else if (isConvexReflective)
+                {
+
+                }
+                
+                //if plane mirror
+                else
+                {
+                    transform.position = new Vector3(OpticalElement.transform.position.x + Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x), OpticalElement.transform.position.y + 4.84F);
+                    transform.localScale = InitialScale;
+                }
             }
-            else
+            if (!isReflective)
             {
-                if (ObjectDistance < FocalLength)
+                if (isConcave)
                 {
                     spriteRenderer.flipY = false;
-                    transform.position = new Vector3(GameObject.Find("Root").transform.position.x - (ImageDistance), GameObject.Find("Root").transform.position.y + Magnification * 2, 0);
+                    transform.position = new Vector3(OpticalElement.transform.position.x - ImageDistance, OpticalElement.transform.position.y + Magnification * 2);
                 }
                 else
                 {
-                    spriteRenderer.flipY = true;
+                    if (ObjectDistance < FocalLength)
+                    {
+                        spriteRenderer.flipY = false;
+                        transform.position = new Vector3(GameObject.Find("Root").transform.position.x - (ImageDistance), GameObject.Find("Root").transform.position.y + Magnification * 2, 0);
+                    }
+                    else
+                    {
+                        spriteRenderer.flipY = true;
 
+                    }
                 }
             }
         }
@@ -173,15 +160,14 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void InitializeObjects()
         {
-            ObjectArrow = GameObject.Find("ObjectArrow");
             spriteRenderer = GetComponent<SpriteRenderer>();
-            FocalLength = 12;
             Magnification = 1;
             InitialScale = transform.localScale;
             SpriteBounds = spriteRenderer.bounds.size.y;
             origin = Camera.main.gameObject.transform.position;
             OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
             Quizzing = false;
+
         }
 
         public void SetPosition(Vector3 position)

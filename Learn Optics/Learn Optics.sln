@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learn Optics", "Assembly-CSharp.csproj", "{E762B84D-CB31-22B6-CF2D-4BE284B913C6}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learn Optics", "Learn Optics.csproj", "{F193DD25-F229-DB4C-E074-F0DBF4747543}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,15 +9,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E762B84D-CB31-22B6-CF2D-4BE284B913C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E762B84D-CB31-22B6-CF2D-4BE284B913C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E762B84D-CB31-22B6-CF2D-4BE284B913C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E762B84D-CB31-22B6-CF2D-4BE284B913C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F193DD25-F229-DB4C-E074-F0DBF4747543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F193DD25-F229-DB4C-E074-F0DBF4747543}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F193DD25-F229-DB4C-E074-F0DBF4747543}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F193DD25-F229-DB4C-E074-F0DBF4747543}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal
