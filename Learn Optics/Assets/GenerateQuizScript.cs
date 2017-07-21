@@ -32,6 +32,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         public bool PlaySceneToggleState;
         public bool isInteractable;
         public bool isConcave;
+        public bool isReflective;
         public int counter;
         public int CurrentRayIndex;
         public int LRIndex;
@@ -93,7 +94,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                 ObjectArrow.transform.GetComponent<ObjectArrowControls>().ResetALRs();
                 if (isConcave)
                 {
-                    ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 18.5F),
+                    ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 5),
                     OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
                 }
                 else

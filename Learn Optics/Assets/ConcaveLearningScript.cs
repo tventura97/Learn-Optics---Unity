@@ -70,7 +70,8 @@ namespace DigitalRuby.AnimatedLineRenderer
                     "Finally, draw a ray that approaches the right focal point of the lens.", "This will emerge parallel to the optical axis.", "TRACE RAYS BACKWARDS, INSERT MORE APPROPRIATE DIALOGUE HERE", "The image is always upright, virtual, and in front of the object.",
                     "We can now use the thin lens equation to calculate the position of the image.", "For a concave lens, the focal length is always negative. This particular lens has a focal length of -12m.", "The object distance is known, at 24.0m",
                     "Using these values, we can calculate the image distance.", "Since the image and object are on the same side of the lens, the image distance is negative. It is located at -8.0m.", "We can use these values to calulate lateral magnification, which is the negative ratio of " +
-                    "image distance and object distance.", "Simply plug in the object distance and image distance to calculate the magnification." };
+                    "image distance and object distance.", "Simply plug in the object distance and image distance to calculate the magnification.", "Concave lenses form images smaller than the object.", "Let's try an example.", "Input the appropriate values into the thin lens equation.", "Calculate the image distance.", "Input the appropriate values into the lateral magnification equation.", "Calculate the lateral magnification",
+                    "You have completed the concave lens lesson."};
 
 
             panelText.text = texts[0];
@@ -360,11 +361,16 @@ namespace DigitalRuby.AnimatedLineRenderer
 
                 case 28:
                     //Pull focal length and object distance
-
                     //Input focal length in InputField
-                    FocalLengthIF.text = "-12";
+                    if (FocalLengthIF.text == "")
+                    {
+                        FocalLengthIF.text = "-12";
+                    }
                     //Input Object distance in InputField
-                    ObjectDistanceIF.text = Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x).ToString("F1");
+                    if (ObjectDistanceIF.text == "")
+                    {
+                        ObjectDistanceIF.text = Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x).ToString("F1");
+                    }
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Calculate";
                     break;
 
@@ -377,10 +383,15 @@ namespace DigitalRuby.AnimatedLineRenderer
                 case 30:
                     //Pull magnification values
                     //Input Object distance in Magnification InputField
-                    mObjectDistanceIF.text = ObjectDistanceIF.text;
-
+                    if (mObjectDistanceIF.text == "")
+                    {
+                        mObjectDistanceIF.text = ObjectDistanceIF.text;
+                    }
                     //Input Image distance in Magnification InputField
-                    mImageDistanceIF.text = ImageDistanceIF.text;
+                    if (mImageDistanceIF.text == "")
+                    {
+                        mImageDistanceIF.text = ImageDistanceIF.text;
+                    }
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Calculate";
                     break;
 
