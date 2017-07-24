@@ -26,6 +26,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         GameObject CurrentALRRay;
         GameObject ImageDistanceText;
         GameObject FocalLengthBar;
+        GameObject SkipLessonButton;
         InputField ObjectDistanceIF;
         InputField ImageDistanceIF;
         InputField FocalLengthIF;
@@ -84,6 +85,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             //Disable animator until proper animations are created. Doesn't matter anyway. Animations are extraneous
             ObjectArrow.GetComponent<Animator>().enabled = false;
             ImageArrow.GetComponent<Animator>().enabled = false;
+            FocalPointMarkerHolder.GetComponent<Animator>().enabled = false;
             //Start 
             OnClick();
         }
@@ -94,10 +96,12 @@ namespace DigitalRuby.AnimatedLineRenderer
             switch (counter)
             {
                 case 0:
+                    GameObject.Find("GenerateQuizButton").GetComponent<GenerateQuizScript>().SetPlayScene(true);
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Start";
                     break;
                 case 1:
                     //Disable all arrows for purpose of demonstration
+                    SkipLessonButton.SetActive(false);
                     ObjectArrow.SetActive(false);
                     ImageArrow.SetActive(false);
                     ImageDistanceText.SetActive(false);
@@ -404,7 +408,9 @@ namespace DigitalRuby.AnimatedLineRenderer
                     transform.position = new Vector3(0, 0, 0);
                     //Move equation panel back up
                     EquationPanelAnimator.SetBool("toggleMenu", false);
-                    PlaySceneToggle.onValueChanged.Invoke(false);
+                    GenerateQuizButton.GetComponent<GenerateQuizScript>().isMirrorSet = false;
+                    SkipLessonButton.SetActive(true);
+                    SkipLessonButton.GetComponent<Button>().onClick.Invoke();
                     break;
                     //END
 
@@ -444,9 +450,9 @@ namespace DigitalRuby.AnimatedLineRenderer
             GenerateQuizButton = GameObject.Find("GenerateQuizButton").GetComponent<Button>();
             ThinLensButton = GameObject.Find("CalculateThinLensButton").GetComponent<Button>();
             MagnificationButton = GameObject.Find("CalculateMagnificationButton").GetComponent<Button>();
-            PlaySceneToggle = GameObject.Find("PlaySceneToggle").GetComponent<Toggle>();
             panelText = GameObject.Find("PromptPanelText").GetComponent<Text>();
             ResetInputFields = GameObject.Find("ResetButton").GetComponent<Button>();
+            SkipLessonButton = GameObject.Find("SkipLessonButton");
             print("Objects Successfully Initialized");
         }
 

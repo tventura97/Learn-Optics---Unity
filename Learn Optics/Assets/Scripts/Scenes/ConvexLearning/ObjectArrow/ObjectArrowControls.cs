@@ -39,6 +39,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         }
         void Update()
         {
+            /*
             if (ControlsEnabled)
             {
                 if (!Quizzing)
@@ -67,7 +68,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                     }
                 }
             }
-            
+            */
 
         }
 

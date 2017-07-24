@@ -17,7 +17,6 @@ public class EquationPanelButtonScript : MonoBehaviour {
     public void OnClick () {
         EquationPanelAnimator.SetBool("toggleMenu", !EquationPanelAnimator.GetBool("toggleMenu"));
         ButtonAnimator.SetBool("toggleMenu", !ButtonAnimator.GetBool("toggleMenu"));
-        print(!ButtonAnimator.GetBool("toggleMenu"));
 
     }
 }

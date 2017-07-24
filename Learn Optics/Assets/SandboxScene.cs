@@ -7,6 +7,6 @@ public class SandboxScene : MonoBehaviour {
 
     public void OnClick()
     {
-        SceneManager.LoadSceneAsync("Activity");
+        SceneManager.LoadSceneAsync("MainMenu");
     }
 }

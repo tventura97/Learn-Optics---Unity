@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>Android:13</UnityBuildTarget>
     <UnityVersion>5.6.2f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -98,8 +96,10 @@
     <Compile Include="Assets\GenerateQuizScript.cs" />
     <Compile Include="Assets\LearnMirrorsScene.cs" />
     <Compile Include="Assets\LoadConcaveScene.cs" />
+    <Compile Include="Assets\MenuScript.cs" />
     <Compile Include="Assets\PlaySceneToggleScript.cs" />
     <Compile Include="Assets\ResetButton.cs" />
+    <Compile Include="Assets\ReturnToMenu.cs" />
     <Compile Include="Assets\SandboxScene.cs" />
     <Compile Include="Assets\Scripts\OpticalProperties.cs" />
     <Compile Include="Assets\Scripts\Scenes\ConvexLearning\ImageArrow\ImageArrowGeneration.cs" />
@@ -131,6 +131,8 @@
     <Compile Include="Assets\Scripts\UI\Sliders\Slider_NIndex.cs" />
     <Compile Include="Assets\Scripts\UI\Sliders\Slider_RoC.cs" />
     <Compile Include="Assets\SetLRPoints.cs" />
+    <Compile Include="Assets\SetPortrait.cs" />
+    <Compile Include="Assets\SkipLessonButtonOnClick.cs" />
     <Compile Include="Assets\TestToggle.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -29,6 +29,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         GameObject CurrentALRRay;
         GameObject ImageDistanceText;
         GameObject FocalLengthBar;
+        GameObject SkipLessonButton;
         InputField ObjectDistanceIF;
         InputField ImageDistanceIF;
         InputField FocalLengthIF;
@@ -86,6 +87,8 @@ namespace DigitalRuby.AnimatedLineRenderer
             promptPanelText = GameObject.Find("PromptPanelText");
             panelText = promptPanelText.GetComponent<Text>();
             counter = 0;
+            FocalPointMarkerHolder.GetComponent<Animator>().enabled = false;
+            ImageArrow.GetComponent<Animator>().enabled = false;
             SetDefaults();
             onClick();
 
@@ -317,7 +320,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             GenerateQuizButton = GameObject.Find("GenerateQuizButton").GetComponent<Button>();
             ThinLensButton = GameObject.Find("CalculateThinLensButton").GetComponent<Button>();
             MagnificationButton = GameObject.Find("CalculateMagnificationButton").GetComponent<Button>();
-            PlaySceneToggle = GameObject.Find("PlaySceneToggle").GetComponent<Toggle>();
+            SkipLessonButton = GameObject.Find("SkipLessonButton");
         }
 
         public void ClearInputFields()
@@ -337,16 +340,18 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 case 0:
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Start";
+                    GameObject.Find("GenerateQuizButton").GetComponent<GenerateQuizScript>().SetPlayScene(true);
                     break;
                 case 1:
                     //Disable all arrows for purpose of demonstration
+                    SkipLessonButton.SetActive(false);
                     ObjectArrow.SetActive(false);
                     ImageArrow.SetActive(false);
                     ImageDistanceText.SetActive(false);
                     FocalPointMarkerHolder.SetActive(true);
                     FocalLengthBar.SetActive(false);
                     transform.GetChild(0).transform.GetChild(0).GetComponent<Text>().text = "Continue";
-
+                    GenerateQuizButton.GetComponent<GenerateQuizScript>().isMirrorSet = true;
                     break;
 
                 case 2:
@@ -570,7 +575,9 @@ namespace DigitalRuby.AnimatedLineRenderer
                     EquationPanelAnimator.SetBool("toggleMenu", false);
                     transform.position -= new Vector3(0, 6500, 0);
                     SetDefaults();
-                    PlaySceneToggle.onValueChanged.Invoke(false);
+                    GenerateQuizButton.GetComponent<GenerateQuizScript>().isMirrorSet = false;
+                    SkipLessonButton.SetActive(true);
+                    SkipLessonButton.GetComponent<Button>().onClick.Invoke();
                     break;
             }
 

@@ -10,6 +10,8 @@ namespace DigitalRuby.AnimatedLineRenderer
     [RequireComponent(typeof(AnimatedLineRenderer))]
     public class GenerateQuizScript : MonoBehaviour
     {
+        public GameObject ConcaveMirror;
+        public GameObject ConvexMirror;
         private GameObject ObjectArrow;
         private GameObject OpticalElement;
         private GameObject ImageArrow;
@@ -17,12 +19,19 @@ namespace DigitalRuby.AnimatedLineRenderer
         private GameObject CurrentRay;
         private GameObject CurrentALRRay;
         private GameObject Root;
+        private GameObject FocalPointMarkerHolder;
+        private Vector3 HitOne;
+        private Vector3 HitTwo;
         private Toggle PlaySceneToggle;
         private Animator EquationPanelAnimator;
         private float ErrorTolerance;
         private float LRScalingFactor;
         private bool isCoroutineExecuting;
         private bool isLRInitializing;
+        public bool isMirrorSet;
+        private bool isConcaveReflective;
+        private bool isConvexReflective;
+        private int MirrorSelection;
         public GameObject ProgrammableLR;
         public GameObject ProgrammableALR;
         public Vector3 FocalPoint;
@@ -53,17 +62,22 @@ namespace DigitalRuby.AnimatedLineRenderer
             counter = 0;
             isInteractable = false;
             isLRInitializing = false;
-            PlaySceneToggleState = PlaySceneToggle.isOn;
+            isMirrorSet = false;
             debugcounter = 0;
+
 
         }
 
         private void Update()
         {
             InitializeObjects();
+            OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
+            FocalPointMarkerHolder = GameObject.Find("FocalPointMarkerHolder");
             FocalLength = Mathf.Abs(GameObject.Find("F1").transform.position.x - OpticalElement.transform.position.x);
             FocalPoint = new Vector3(OpticalElement.transform.position.x + FocalLength, OpticalElement.transform.position.y);
             FocalPointLeft = new Vector3(OpticalElement.transform.position.x - FocalLength, OpticalElement.transform.position.y);
+            isConcaveReflective = OpticalElement.GetComponent<Properties_Optical>().isConcaveReflective;
+            isConvexReflective = OpticalElement.GetComponent<Properties_Optical>().isConvexReflective;
         }
         private void InitializeObjects()
         {
@@ -72,7 +86,6 @@ namespace DigitalRuby.AnimatedLineRenderer
             ImageArrow = GameObject.Find("ImageArrow");
             ImageDistanceText = GameObject.Find("ImageDistanceText");
             Root = GameObject.Find("Root");
-            PlaySceneToggle = GameObject.Find("PlaySceneToggle").GetComponent<Toggle>();
             EquationPanelAnimator = GameObject.Find("EquationPanel").GetComponent<Animator>();
         }
         private void FixedUpdate()
@@ -86,29 +99,54 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void OnClick()
         {
+            counter = 0;
+            CurrentRayIndex = 0;
+            LRIndex = 1;
+            //Put this here. It moves around otherwise
+
             //If the scene is not playing, then do everything else. Otherwise, no functionality.
             if (!PlaySceneToggleState)
             {
                 //This will destroy any and all forms of line renderers currently present in the scene.
-
-                //Learning Scripts can bypass the PlaySceneToggleRequirement.
-
+                FocalPointMarkerHolder.GetComponent<Animator>().enabled = false;
+                FocalPointMarkerHolder.transform.position = Root.transform.position;
                 DestroyAllLineRenderers();
                 ObjectArrow.SetActive(true);
                 ImageArrow.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
                 ObjectArrow.transform.GetComponent<ObjectArrowControls>().ResetALRs();
-                if (isConcave)
+                //If the SetMirror() Function has not been called, assign a random value to the MirrorSelection.
+                if (isReflective)
                 {
-                    if (isReflective)
+                    Destroy(GameObject.FindGameObjectWithTag("OpticalElement"));
+                    if (!isMirrorSet)
                     {
-                        ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 25),
-                        OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
+                        MirrorSelection = Random.Range(0, 2);
                     }
-                    else
+                    switch (MirrorSelection)
                     {
-                        ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 5),
-                        OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
+                        case 0:
+                            Instantiate(ConvexMirror, Root.transform.position, Quaternion.Euler(0, -90, 90), Root.transform);
+                            break;
+                        case 1:
+                            Instantiate(ConcaveMirror, Root.transform.position, Quaternion.Euler(0, 90, 90), Root.transform);
+                            break;
+
                     }
+                }
+
+                if (isConcave && !isReflective)
+                {
+
+                    ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 5),
+                        OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
+
+                }
+                else if (isReflective)
+                {
+
+                    ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 5),
+                        OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
+
                 }
                 else
                 {
@@ -116,8 +154,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                     OpticalElement.transform.position.y + 2, OpticalElement.transform.position.z);
                 }
 
-                counter = 0;
-                LRIndex = 1;
+
                 InitializeLineRenderers();
                 isInteractable = true;
 
@@ -129,7 +166,23 @@ namespace DigitalRuby.AnimatedLineRenderer
             CurrentRay = Instantiate(ProgrammableLR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
             if (isReflective)
             {
-                CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.Euler(0, 0, AngleBetween(Vector3.right, (FocalPointLeft - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F)))), Root.transform);
+                if (isConcaveReflective)
+                {
+                    if (ObjectArrow.transform.position.x < FocalLength)
+                    {
+                        CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.Euler(0, 0, AngleBetween(Vector3.right, (OpticalElement.transform.position - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F)))), Root.transform);
+
+                    }
+                    else
+                    {
+                        CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.Euler(0, 0, AngleBetween(Vector3.right, (FocalPointLeft - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F)))), Root.transform);
+
+                    }
+                }
+                else
+                {
+                    CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.Euler(0, 0, AngleBetween(Vector3.right, (FocalPoint - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F)))), Root.transform);
+                }
             }
             else if (!isReflective)
             {
@@ -157,18 +210,24 @@ namespace DigitalRuby.AnimatedLineRenderer
         {
             if (isInteractable)
             {
-                Vector3 point;
-                point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                /*
+                Vector3 point;                
                 if (Input.touchCount < 1)
                 {
-                    point = new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
+                    if (isConcave || isConcaveReflective || isConvexReflective)
+                    {
+                        point = new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
+                    }
+
+                    else
+                    {
+                        point = new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F);
+                    }
                 }
                 else
                 {
                     point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
                 }
-                */
+                
                 switch (counter)
                 {
                     case 0:
@@ -238,15 +297,17 @@ namespace DigitalRuby.AnimatedLineRenderer
                             CurrentRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(OpticalElement.transform.position.x, CalculateFinalConcavePosition().y), 1);
                             CurrentRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(-1000, CalculateFinalConcavePosition().y), 10);
 
-                            isInteractable = false;
-                            transform.GetChild(0).gameObject.SetActive(true);
                             ImageArrow.GetComponent<ImageArrowGeneration>().CalculatePosition();
                             ImageArrow.GetComponent<ImageArrowGeneration>().SetPosition();
+                            isInteractable = false;
+                            transform.GetChild(0).gameObject.SetActive(true);
+
                         }
+
                         break;
 
                 }
-                if (counter < 4)
+                if (counter < 3)
                 {
                     if (CurrentRay != null)
                     {
@@ -303,8 +364,16 @@ namespace DigitalRuby.AnimatedLineRenderer
                                 {
                                     if (isReflective)
                                     {
-                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(-LRScalingFactor * (new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F) - FocalPointLeft), LRScalingFactor / 10);
-                                        CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, -LRScalingFactor * (FocalPoint - new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F)));
+                                        if (isConcaveReflective)
+                                        {
+                                            CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(-LRScalingFactor * (new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F) - FocalPointLeft), LRScalingFactor / 10);
+                                            CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, -LRScalingFactor * (FocalPoint - new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F)));
+                                        }
+                                        else
+                                        {
+                                            CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(LRScalingFactor * ((new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F)) - FocalPoint), LRScalingFactor / 10);
+                                            CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, LRScalingFactor * ((new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F)) - FocalPoint));
+                                        }
                                     }
 
                                     else
@@ -355,23 +424,79 @@ namespace DigitalRuby.AnimatedLineRenderer
                                     CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint());
                                     CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(CurrentALRRay.GetComponent<SetPoints>().GetHitPoint(), 0.5F);
                                 }
-                                counter++;
                                 LRIndex++;
                                 StartCoroutine(ExecuteAfterTime(0.5F));
-                             
+
                             }
                             break;
 
                         case 2:
                             if (isReflective)
                             {
-                                if (CheckPointLocation(point, 1))
+                                HitOne = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
+                                if (CheckPointLocation(point, 1) || (ObjectArrow.transform.position.x < FocalLength && !isConvexReflective))
                                 {
                                     CurrentRay.GetComponent<SetLRPoints>().SetVisible(false);
-                                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3 (-1000, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y));
-                                    CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(-1000, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y), 100);
+                                    HitTwo = CurrentALRRay.GetComponent<SetPoints>().GetHitPoint();
+                                    if (ObjectArrow.transform.position.x < FocalLength && !isConvexReflective)
+                                    {
+                                        CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, CurrentALRRay.GetComponent<SetPoints>().GetReflectedDirection());
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(CurrentALRRay.GetComponent<SetPoints>().GetReflectedDirection(), LRScalingFactor / 100);
+                                        Vector3 ReflectedDirection = CurrentALRRay.GetComponent<SetPoints>().GetReflectedDirection();
+                                        //Reverse parallel ray
+                                        CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.identity);
+                                        CurrentALRRay.GetComponent<SetPoints>().InitializeALR();
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartWidth = 0.1F;
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndWidth = 0.1F;
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(HitOne, 0);
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(LRScalingFactor * (HitOne - FocalPointLeft), LRScalingFactor / 10);
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartColor = new Color(0, 255, 0);
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndColor = new Color(0, 255, 0);
+
+                                        //Reverse FocalPoint Ray
+                                        CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.identity);
+                                        CurrentALRRay.GetComponent<SetPoints>().InitializeALR();
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartWidth = 0.1F;
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndWidth = 0.1F;
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(HitTwo.x - 0.25F, HitTwo.y), 0);
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(LRScalingFactor * -new Vector3(ReflectedDirection.x, ReflectedDirection.y + 10), LRScalingFactor / 1000);
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartColor = new Color(0, 255, 0);
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndColor = new Color(0, 255, 0);
+                                    }
+                                    else
+                                    {
+                                        CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3(-1000, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y));
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(-1000, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y), 10);
+                                    }
+
                                     ImageArrow.GetComponent<ImageArrowGeneration>().CalculatePosition();
-                                    ImageArrow.transform.position = ImageArrow.GetComponent<ImageArrowGeneration>().GetPosition();
+                                    ImageArrow.GetComponent<ImageArrowGeneration>().SetPosition();
+
+                                    if (isConvexReflective)
+                                    {
+                                        //Reverse Ray Direction if convex mirror
+                                        //Reverse direction of Parallel Ray
+                                        CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.identity);
+                                        CurrentALRRay.GetComponent<SetPoints>().InitializeALR();
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartWidth = 0.1F;
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndWidth = 0.1F;
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(HitOne, 0);
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(LRScalingFactor * -(HitOne - FocalPoint), LRScalingFactor / 10);
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartColor = new Color(0, 255, 0);
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndColor = new Color(0, 255, 0);
+
+                                        //Reverse Focal Point Ray
+                                        CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.identity);
+                                        CurrentALRRay.GetComponent<SetPoints>().InitializeALR();
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartWidth = 0.1F;
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndWidth = 0.1F;
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(HitTwo.x - 0.7F, HitTwo.y), 0);
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(1000, HitTwo.y), 10);
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartColor = new Color(0, 255, 0);
+                                        CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndColor = new Color(0, 255, 0);
+                                    }
+
+
                                     isInteractable = false;
                                     isLRInitializing = false;
                                     StartCoroutine(ExecuteAfterTime(0.5F));
@@ -379,64 +504,78 @@ namespace DigitalRuby.AnimatedLineRenderer
                                 }
 
                             }
+                            else
+                            {
+                                counter++;
+                                isLRInitializing = false;
+                            }
                             break;
                     }
                     break;
 
                 //Focal Point Ray
                 case 2:
-                    switch (LRIndex)
+                    print("case 2");
+                    if (!isReflective)
                     {
-                        case 1:
-                            if (CheckPointLocation(point, 0))
-                            {
-                                CurrentRay.GetComponent<SetLRPoints>().SetVisible(false);
-                                CurrentRay.GetComponent<SetLRPoints>().SetNumLRPoints(3);
-                                if (isConcave)
+                        switch (LRIndex)
+                        {
+                            case 1:
+                                if (CheckPointLocation(point, 0))
                                 {
-                                    CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(CalculateFinalConcavePosition(), 0.5F);
-                                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, CalculateFinalConcavePosition());
+                                    CurrentRay.GetComponent<SetLRPoints>().SetVisible(false);
+                                    CurrentRay.GetComponent<SetLRPoints>().SetNumLRPoints(3);
+                                    if (isConcave)
+                                    {
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(CalculateFinalConcavePosition(), 0.5F);
+                                        CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, CalculateFinalConcavePosition());
+                                    }
+                                    else
+                                    {
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(CalculateFinalPosition(), 0.5F);
+                                        CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, CalculateFinalPosition());
+                                    }
+
+                                    StartCoroutine(ExecuteAfterTime(0.5F));
+                                    LRIndex++;
                                 }
-                                else
+                                break;
+
+                            case 2:
+                                if (CheckPointLocation(point, 1))
                                 {
-                                    CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(CalculateFinalPosition(), 0.5F);
-                                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, CalculateFinalPosition());
+                                    CurrentRay.GetComponent<SetLRPoints>().SetVisible(false);
+                                    if (isConcave)
+                                    {
+                                        CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3(1000, CalculateFinalConcavePosition().y, CalculateFinalConcavePosition().z));
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(1000, CalculateFinalConcavePosition().y, CalculateFinalConcavePosition().z), 25);
+                                    }
+                                    else
+                                    {
+                                        CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3(1000, CalculateFinalPosition().y, CalculateFinalPosition().z));
+                                        CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(1000, CalculateFinalPosition().y, CalculateFinalPosition().z), 25);
+                                    }
+
+                                    counter++;
+                                    isLRInitializing = false;
+                                    //This is the last ray to be drawn. Once this is drawn correctly (the function ensures it), the image will be generated.
+                                    if (!isConcave)
+                                    {
+                                        transform.GetChild(0).gameObject.SetActive(true);
+                                        ImageArrow.GetComponent<ImageArrowGeneration>().CalculatePosition();
+                                        ImageArrow.GetComponent<ImageArrowGeneration>().SetPosition();
+                                        print("position set");
+                                        isInteractable = false;
+                                    }
+
+
                                 }
-
-                                StartCoroutine(ExecuteAfterTime(0.5F));
-                                LRIndex++;
-                            }
-                            break;
-
-                        case 2:
-                            if (CheckPointLocation(point, 1))
-                            {
-                                CurrentRay.GetComponent<SetLRPoints>().SetVisible(false);
-                                if (isConcave)
-                                {
-                                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3(1000, CalculateFinalConcavePosition().y, CalculateFinalConcavePosition().z));
-                                    CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(1000, CalculateFinalConcavePosition().y, CalculateFinalConcavePosition().z), 25);
-                                }
-                                else
-                                {
-                                    CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3(1000, CalculateFinalPosition().y, CalculateFinalPosition().z));
-                                    CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(1000, CalculateFinalPosition().y, CalculateFinalPosition().z), 25);
-                                }
-
-                                counter++;
-                                isLRInitializing = false;
-                                //This is the last ray to be drawn. Once this is drawn correctly (the function ensures it), the image will be generated.
-                                if (!isConcave)
-                                {
-                                    transform.GetChild(0).gameObject.SetActive(true);
-                                    ImageArrow.GetComponent<ImageArrowGeneration>().CalculatePosition();
-                                    ImageArrow.transform.position = ImageArrow.GetComponent<ImageArrowGeneration>().GetPosition();
-                                    isInteractable = false;
-                                }
-
-
-                            }
-                            break;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        //Do nothing
                     }
                     break;
             }
@@ -444,9 +583,6 @@ namespace DigitalRuby.AnimatedLineRenderer
         }
         bool CheckPointLocation(Vector3 point, int index)
         {
-            print("Checking Point Location " + debugcounter);
-            debugcounter++;
-
             Vector3[] CorrectPosition = CalculatePositions();
             //If the values are within ErrorTolerance % of each other, it is considered correct. This is important since, on a phone screen, space is not optimal, so you need some allowances.
             //Note that if the F is not in front of the 1.00, Unity will cast it to an int.
@@ -502,18 +638,43 @@ namespace DigitalRuby.AnimatedLineRenderer
 
                     else
                     {
-                        points[0] = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
-                        points[1] = FocalPointLeft;
+                        if (isConcaveReflective)
+                        {
+                            points[0] = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
+                            points[1] = FocalPointLeft;
+                        }
+                        else
+                        {
+                            points[0] = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
+                            points[1] = CalculateFinalConvexPosition();
+                        }
                     }
                     break;
 
-                //Optical Center Ray
+                //Optical Center Ray or Focal Point Ray for Mirrors
                 case 1:
                     if (isReflective)
                     {
                         CurrentALRRay.GetComponent<SetPoints>().CalculateReflectedDirection();
-                        points[0] = CurrentALRRay.GetComponent<SetPoints>().GetHitPoint();
-                        points[1] = new Vector3(FocalPointLeft.x, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y);
+
+                        if (isConcaveReflective)
+                        {
+                            if (ObjectArrow.transform.position.x < FocalLength)
+                            {
+                                points[0] = CurrentALRRay.GetComponent<SetPoints>().GetHitPoint();
+                                points[1] = points[0];
+                            }
+                            else
+                            {
+                                points[0] = CurrentALRRay.GetComponent<SetPoints>().GetHitPoint();
+                                points[1] = new Vector3(FocalPointLeft.x, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y);
+                            }
+                        }
+                        else
+                        {
+                            points[0] = CurrentALRRay.GetComponent<SetPoints>().GetHitPoint();
+                            points[1] = new Vector3(FocalPointLeft.x, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y);
+                        }
                     }
 
                     else
@@ -532,7 +693,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                     }
                     break;
 
-                //Focal Point Ray
+                //Focal Point Ray (Lenses only)
                 case 2:
                     if (isConcave)
                     {
@@ -634,6 +795,22 @@ namespace DigitalRuby.AnimatedLineRenderer
             PlaySceneToggleState = isOn;
         }
 
+        public void SetMirror(int Mirror)
+        {
+            //0 for convex mirror, 1 for concave mirror
+
+            MirrorSelection = Mirror;
+            isMirrorSet = true;
+        }
+
+        public Vector3 CalculateFinalConvexPosition()
+        {
+            float x, y;
+            x = FocalPointLeft.x;
+            y = Mathf.Abs(GameObject.Find("F1").transform.position.x - GameObject.Find("F2").transform.position.x) / Mathf.Tan(Mathf.Deg2Rad * AngleBetween(Vector3.down, new Vector3(ObjectArrow.transform.position.y + 3.3F, OpticalElement.transform.position.x) - FocalPoint));
+            return new Vector3(x, y);
+
+        }
     }
 
 }

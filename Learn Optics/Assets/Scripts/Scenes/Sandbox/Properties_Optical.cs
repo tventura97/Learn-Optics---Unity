@@ -15,6 +15,7 @@ public class Properties_Optical : MonoBehaviour
     public bool isCurved = true;
     public bool isConcaveReflective;
     public bool isConvexReflective;
+    public bool isConcave;
     //Distance moved on keypress
     private float movementDistance;
     public static int gottem;

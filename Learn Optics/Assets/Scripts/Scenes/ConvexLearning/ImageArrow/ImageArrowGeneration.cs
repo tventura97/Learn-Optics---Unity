@@ -40,7 +40,18 @@ namespace DigitalRuby.AnimatedLineRenderer
             //Keep this in update because in the learn mirrors scene, the optical element will change at runtime, so these need to be updated.
             ObjectArrow = GameObject.Find("ObjectArrow");
             OpticalElement = GameObject.FindGameObjectWithTag("OpticalElement");
-            FocalLength = Mathf.Abs(GameObject.Find("F1").transform.position.x - OpticalElement.transform.position.x);
+
+            //If we have a convex mirror or a concave lens, focal length is negative
+            if (OpticalElement.GetComponent<Properties_Optical>().isConvexReflective || (!OpticalElement.GetComponent<Properties_Optical>().isReflective && OpticalElement.GetComponent<Properties_Optical>().isConcave))
+            {
+                FocalLength = -Mathf.Abs(GameObject.Find("F1").transform.position.x - OpticalElement.transform.position.x);
+
+            }
+            else
+            {
+                FocalLength = Mathf.Abs(GameObject.Find("F1").transform.position.x - OpticalElement.transform.position.x);
+            }
+
             isConcaveReflective = GameObject.FindGameObjectWithTag("OpticalElement").GetComponent<Properties_Optical>().isConcaveReflective;
             isConvexReflective = GameObject.FindGameObjectWithTag("OpticalElement").GetComponent<Properties_Optical>().isConvexReflective;
 
@@ -90,12 +101,19 @@ namespace DigitalRuby.AnimatedLineRenderer
                 {
                     spriteRenderer.flipY = true;
                     transform.position = new Vector3(OpticalElement.transform.position.x - ImageDistance, OpticalElement.transform.position.y - Magnification * 1.89F);
+                    //If Object is inside focal length of mirror
+                    if (Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x) < 15)
+                    {
+                        spriteRenderer.flipY = false;
+                        transform.position = new Vector3(OpticalElement.transform.position.x + ImageDistance, OpticalElement.transform.position.y + Magnification * 1.89F);
+                    }
                 }
 
                 //if convex mirror
                 else if (isConvexReflective)
                 {
-
+                    spriteRenderer.flipY = false;
+                    transform.position = new Vector3(OpticalElement.transform.position.x + ImageDistance, OpticalElement.transform.position.y + Magnification * 1.89F);
                 }
                 
                 //if plane mirror
@@ -122,6 +140,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                     else
                     {
                         spriteRenderer.flipY = true;
+                        transform.position = new Vector3(GameObject.Find("Root").transform.position.x + (ImageDistance), GameObject.Find("Root").transform.position.y - Magnification * 2, 0);
 
                     }
                 }
