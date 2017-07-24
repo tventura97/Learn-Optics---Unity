@@ -36,7 +36,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         public int counter;
         public int CurrentRayIndex;
         public int LRIndex;
-
+        int debugcounter;
 
 
         void Start()
@@ -54,6 +54,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             isInteractable = false;
             isLRInitializing = false;
             PlaySceneToggleState = PlaySceneToggle.isOn;
+            debugcounter = 0;
 
         }
 
@@ -128,8 +129,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             CurrentRay = Instantiate(ProgrammableLR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
             if (isReflective)
             {
-                CurrentALRRay = Instantiate(ProgrammableALR, ObjectArrow.transform.position, Quaternion.Euler(0, 0, AngleBetween(Vector3.right, FocalPointLeft - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F))), Root.transform);
-
+                CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.Euler(0, 0, AngleBetween(Vector3.right, (FocalPointLeft - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F)))), Root.transform);
             }
             else if (!isReflective)
             {
@@ -246,7 +246,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                         break;
 
                 }
-                if (counter < 3)
+                if (counter < 4)
                 {
                     if (CurrentRay != null)
                     {
@@ -355,9 +355,10 @@ namespace DigitalRuby.AnimatedLineRenderer
                                     CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint());
                                     CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(CurrentALRRay.GetComponent<SetPoints>().GetHitPoint(), 0.5F);
                                 }
-                                StartCoroutine(ExecuteAfterTime(0.5F));
                                 counter++;
-                                LRIndex++;                                
+                                LRIndex++;
+                                StartCoroutine(ExecuteAfterTime(0.5F));
+                             
                             }
                             break;
 
@@ -369,11 +370,14 @@ namespace DigitalRuby.AnimatedLineRenderer
                                     CurrentRay.GetComponent<SetLRPoints>().SetVisible(false);
                                     CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3 (-1000, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y));
                                     CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(-1000, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y), 100);
+                                    ImageArrow.GetComponent<ImageArrowGeneration>().CalculatePosition();
+                                    ImageArrow.transform.position = ImageArrow.GetComponent<ImageArrowGeneration>().GetPosition();
+                                    isInteractable = false;
+                                    isLRInitializing = false;
+                                    StartCoroutine(ExecuteAfterTime(0.5F));
+                                    counter++;
                                 }
-                                StartCoroutine(ExecuteAfterTime(0.5F));
-                                counter++;
-                                LRIndex++;
-                                isLRInitializing = false;
+
                             }
                             break;
                     }
@@ -440,12 +444,15 @@ namespace DigitalRuby.AnimatedLineRenderer
         }
         bool CheckPointLocation(Vector3 point, int index)
         {
+            print("Checking Point Location " + debugcounter);
+            debugcounter++;
 
             Vector3[] CorrectPosition = CalculatePositions();
             //If the values are within ErrorTolerance % of each other, it is considered correct. This is important since, on a phone screen, space is not optimal, so you need some allowances.
             //Note that if the F is not in front of the 1.00, Unity will cast it to an int.
             bool XCorrect = Mathf.Abs(point.x / CorrectPosition[index].x) < 1.00F + ErrorTolerance && Mathf.Abs(point.x / CorrectPosition[index].x) > 1.00F - ErrorTolerance;
             bool YCorrect = Mathf.Abs(point.y / CorrectPosition[index].y) < 1.00F + ErrorTolerance && Mathf.Abs(point.y / CorrectPosition[index].y) > 1.00F - ErrorTolerance;
+
             if (XCorrect && YCorrect)
             {
                 return true;
@@ -507,7 +514,6 @@ namespace DigitalRuby.AnimatedLineRenderer
                         CurrentALRRay.GetComponent<SetPoints>().CalculateReflectedDirection();
                         points[0] = CurrentALRRay.GetComponent<SetPoints>().GetHitPoint();
                         points[1] = new Vector3(FocalPointLeft.x, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y);
-
                     }
 
                     else

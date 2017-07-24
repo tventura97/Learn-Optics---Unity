@@ -342,6 +342,9 @@ namespace DigitalRuby.AnimatedLineRenderer
                     GameObject.Find("GenerateQuizButton").GetComponent<GenerateQuizScript>().SetPlayScene(false);
                     GenerateQuizButton.onClick.Invoke();
                     break;
+
+                case 12:
+                    break;
             }
 
             if (counter < texts.Length)
