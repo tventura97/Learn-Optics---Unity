@@ -226,8 +226,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             if (isInteractable)
             {
                 Vector3 point;
-                point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                /*
+
                 if (Input.touchCount < 1)
                 {
                     if (isConcave || isConcaveReflective || isConvexReflective)
@@ -244,7 +243,6 @@ namespace DigitalRuby.AnimatedLineRenderer
                 {
                     point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
                 }
-                */
                 switch (counter)
                 {
                     case 0:
