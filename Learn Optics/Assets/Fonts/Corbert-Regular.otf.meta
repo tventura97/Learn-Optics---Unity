@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 31790975a1f6b5b43a862b1e15ec4805
+timeCreated: 1501094043
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Corbert
+  fontNames:
+  - Corbert
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

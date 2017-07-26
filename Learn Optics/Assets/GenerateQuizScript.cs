@@ -32,6 +32,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         private bool isConcaveReflective;
         private bool isConvexReflective;
         private int MirrorSelection;
+        private Text ButtonText;
         public GameObject ProgrammableLR;
         public GameObject ProgrammableALR;
         public Vector3 FocalPoint;
@@ -78,6 +79,8 @@ namespace DigitalRuby.AnimatedLineRenderer
             FocalPointLeft = new Vector3(OpticalElement.transform.position.x - FocalLength, OpticalElement.transform.position.y);
             isConcaveReflective = OpticalElement.GetComponent<Properties_Optical>().isConcaveReflective;
             isConvexReflective = OpticalElement.GetComponent<Properties_Optical>().isConvexReflective;
+            ButtonText.enabled = true;
+            ButtonText.text = "Generate Quiz";
         }
         private void InitializeObjects()
         {
@@ -87,6 +90,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             ImageDistanceText = GameObject.Find("ImageDistanceText");
             Root = GameObject.Find("Root");
             EquationPanelAnimator = GameObject.Find("EquationPanel").GetComponent<Animator>();
+            ButtonText = transform.GetChild(0).GetComponent<Text>();
         }
         private void FixedUpdate()
         {
@@ -143,9 +147,20 @@ namespace DigitalRuby.AnimatedLineRenderer
                 }
                 else if (isReflective)
                 {
+                    //50% chance of it being in front the focal point or from Lens position - 30 to lens position - 22. This is because past 22, going through the focal point doesn't
+                    //result in a collision with the optical element
+                    switch (Random.Range(0, 2))
+                    {
+                        case 0:
+                            ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 22),
+    OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
+                            break;
+                        case 1:
+                            ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - FocalLength, OpticalElement.transform.position.x - 5),
+    OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
+                            break;
+                    }
 
-                    ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 5),
-                        OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
 
                 }
                 else
@@ -168,7 +183,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 if (isConcaveReflective)
                 {
-                    if (ObjectArrow.transform.position.x < FocalLength)
+                    if (Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x) < FocalLength)
                     {
                         CurrentALRRay = Instantiate(ProgrammableALR, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), Quaternion.Euler(0, 0, AngleBetween(Vector3.right, (OpticalElement.transform.position - new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F)))), Root.transform);
 
@@ -210,7 +225,9 @@ namespace DigitalRuby.AnimatedLineRenderer
         {
             if (isInteractable)
             {
-                Vector3 point;                
+                Vector3 point;
+                point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                /*
                 if (Input.touchCount < 1)
                 {
                     if (isConcave || isConcaveReflective || isConvexReflective)
@@ -227,7 +244,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                 {
                     point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
                 }
-                
+                */
                 switch (counter)
                 {
                     case 0:
@@ -307,13 +324,25 @@ namespace DigitalRuby.AnimatedLineRenderer
                         break;
 
                 }
-                if (counter < 3)
+                //limits the number of times the line renderer can have its position set. If this number is too high, this if statement is too high, the next few lines of code try to improperly
+                //position the line renderer, so then we have stray rays of light everywhere
+                int LineRendLimit;
+                if (isReflective)
+                {
+                    LineRendLimit = 2;
+                }
+                else
+                {
+                    LineRendLimit = 3;
+                }
+                if (counter < LineRendLimit)
                 {
                     if (CurrentRay != null)
                     {
                         CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, point);
                     }
                 }
+
             }
 
         }
@@ -388,7 +417,6 @@ namespace DigitalRuby.AnimatedLineRenderer
                                     CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, LRScalingFactor * (FocalPoint - new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F)));
                                 }
 
-                                StartCoroutine(ExecuteAfterTime(0.5F));
                                 counter++;
                                 isLRInitializing = false;
                             }
@@ -398,6 +426,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                     break;
                 //Optical Center Ray
                 case 1:
+                    StartCoroutine(ExecuteAfterTime(0.5F));
                     switch (LRIndex)
                     {
                         case 1:
@@ -434,11 +463,12 @@ namespace DigitalRuby.AnimatedLineRenderer
                             if (isReflective)
                             {
                                 HitOne = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
-                                if (CheckPointLocation(point, 1) || (ObjectArrow.transform.position.x < FocalLength && !isConvexReflective))
+                                if (CheckPointLocation(point, 1) || (Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x) < FocalLength && !isConvexReflective))
                                 {
                                     CurrentRay.GetComponent<SetLRPoints>().SetVisible(false);
                                     HitTwo = CurrentALRRay.GetComponent<SetPoints>().GetHitPoint();
-                                    if (ObjectArrow.transform.position.x < FocalLength && !isConvexReflective)
+
+                                    if (Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x) < FocalLength && !isConvexReflective)
                                     {
                                         CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, CurrentALRRay.GetComponent<SetPoints>().GetReflectedDirection());
                                         CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(CurrentALRRay.GetComponent<SetPoints>().GetReflectedDirection(), LRScalingFactor / 100);
@@ -468,7 +498,6 @@ namespace DigitalRuby.AnimatedLineRenderer
                                         CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3(-1000, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y));
                                         CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(-1000, CurrentALRRay.GetComponent<SetPoints>().GetHitPoint().y), 10);
                                     }
-
                                     ImageArrow.GetComponent<ImageArrowGeneration>().CalculatePosition();
                                     ImageArrow.GetComponent<ImageArrowGeneration>().SetPosition();
 
@@ -499,7 +528,6 @@ namespace DigitalRuby.AnimatedLineRenderer
 
                                     isInteractable = false;
                                     isLRInitializing = false;
-                                    StartCoroutine(ExecuteAfterTime(0.5F));
                                     counter++;
                                 }
 
@@ -515,6 +543,7 @@ namespace DigitalRuby.AnimatedLineRenderer
 
                 //Focal Point Ray
                 case 2:
+                    StartCoroutine(ExecuteAfterTime(0.5F));
                     print("case 2");
                     if (!isReflective)
                     {
@@ -640,13 +669,19 @@ namespace DigitalRuby.AnimatedLineRenderer
                     {
                         if (isConcaveReflective)
                         {
-                            points[0] = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
-                            points[1] = FocalPointLeft;
+                            if (OpticalElement != null)
+                            {
+                                points[0] = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
+                                points[1] = FocalPointLeft;
+                            }
                         }
                         else
                         {
-                            points[0] = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
-                            points[1] = CalculateFinalConvexPosition();
+                            if (OpticalElement != null)
+                            {
+                                points[0] = new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
+                                points[1] = CalculateFinalConvexPosition();
+                            }
                         }
                     }
                     break;
@@ -659,7 +694,7 @@ namespace DigitalRuby.AnimatedLineRenderer
 
                         if (isConcaveReflective)
                         {
-                            if (ObjectArrow.transform.position.x < FocalLength)
+                            if (Mathf.Abs(ObjectArrow.transform.position.x - OpticalElement.transform.position.x) < FocalLength)
                             {
                                 points[0] = CurrentALRRay.GetComponent<SetPoints>().GetHitPoint();
                                 points[1] = points[0];
