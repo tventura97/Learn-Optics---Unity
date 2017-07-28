@@ -227,21 +227,32 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 Vector3 point;
 
-                if (Input.touchCount < 1)
+                if (true)
                 {
-                    if (isConcave || isConcaveReflective || isConvexReflective)
+                    if (Input.touchCount < 1)
                     {
-                        point = new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
-                    }
+                        if (isConcave || isConcaveReflective || isConvexReflective)
+                        {
+                            point = new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F);
+                        }
 
+                        else
+                        {
+                            point = new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F);
+                        }
+
+                        //Display prompt telling user to touch the screen to start ray tracing
+
+                    }
                     else
                     {
-                        point = new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F);
+                        point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
                     }
                 }
                 else
                 {
-                    point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
+                    point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
                 }
                 switch (counter)
                 {
@@ -611,10 +622,30 @@ namespace DigitalRuby.AnimatedLineRenderer
         bool CheckPointLocation(Vector3 point, int index)
         {
             Vector3[] CorrectPosition = CalculatePositions();
+            bool XCorrect, YCorrect;
             //If the values are within ErrorTolerance % of each other, it is considered correct. This is important since, on a phone screen, space is not optimal, so you need some allowances.
             //Note that if the F is not in front of the 1.00, Unity will cast it to an int.
-            bool XCorrect = Mathf.Abs(point.x / CorrectPosition[index].x) < 1.00F + ErrorTolerance && Mathf.Abs(point.x / CorrectPosition[index].x) > 1.00F - ErrorTolerance;
-            bool YCorrect = Mathf.Abs(point.y / CorrectPosition[index].y) < 1.00F + ErrorTolerance && Mathf.Abs(point.y / CorrectPosition[index].y) > 1.00F - ErrorTolerance;
+
+            //Check point and trajectory. If either of them are correct (provided that we are past a certain point on the x axis), then return true for XCorrect and YCorrect
+            //We know that trajectory only matters with the second round of line renderers (what happens to the ray after it interacts with the optical element),
+            //It will still check the point for the first round of line renderers (Since they should all be drawn to hit the optical element)
+
+            if (Mathf.Abs(point.x / CorrectPosition[index].x) < 1.00F + ErrorTolerance && Mathf.Abs(point.x / CorrectPosition[index].x) > 1.00F - ErrorTolerance || TrajectoryCheck(point, CorrectPosition))
+            {
+                XCorrect = true;
+            }
+            else
+            {
+                XCorrect = false;
+            }
+            if (Mathf.Abs(point.y / CorrectPosition[index].y) < 1.00F + ErrorTolerance && Mathf.Abs(point.y / CorrectPosition[index].y) > 1.00F - ErrorTolerance || TrajectoryCheck(point, CorrectPosition))
+            {
+                YCorrect = true;
+            }
+            else
+            {
+                YCorrect = false;
+            }
 
             if (XCorrect && YCorrect)
             {
@@ -841,8 +872,48 @@ namespace DigitalRuby.AnimatedLineRenderer
             float x, y;
             x = FocalPointLeft.x;
             y = Mathf.Abs(GameObject.Find("F1").transform.position.x - GameObject.Find("F2").transform.position.x) / Mathf.Tan(Mathf.Deg2Rad * AngleBetween(Vector3.down, new Vector3(ObjectArrow.transform.position.y + 3.3F, OpticalElement.transform.position.x) - FocalPoint));
-            return new Vector3(x, y);
+            return new Vector3(x, -y);
 
+        }
+
+        public bool TrajectoryCheck(Vector3 point, Vector3[] CorrectPosition)
+        {
+            bool XCorrect = false;
+            bool YCorrect = false;
+            Vector2 UserTrajectory = new Vector2(point.x, point.y) - new Vector2(CorrectPosition[0].x, CorrectPosition[0].y);
+            Vector2 CalculatedTrajectory = new Vector2(CorrectPosition[1].x, CorrectPosition[1].y) - new Vector2(CorrectPosition[0].x, CorrectPosition[0].y);
+
+            print(UserTrajectory + "||" + CalculatedTrajectory + "||" +  CorrectPosition[0] + "||" + CorrectPosition[1]);
+
+            //Don't forget to normalize the vectors and make sure that the length of the user line renderer is long enough that they don't accidentally get the correct answer just by tapping in the right spot near the lens/mirror
+            if ((Vector2.Dot(UserTrajectory.normalized, CalculatedTrajectory.normalized) > 1 - ErrorTolerance && Vector2.Dot(UserTrajectory.normalized, CalculatedTrajectory.normalized) < 1 + ErrorTolerance))
+            {
+                if (UserTrajectory.magnitude > 15)
+                {
+                    XCorrect = true;
+                    YCorrect = true;
+                }
+                else
+                {
+                    XCorrect = false;
+                    YCorrect = false;
+                }
+            }
+            else
+            {
+                XCorrect = false;
+                YCorrect = false;
+            }
+
+
+            if (XCorrect == true && YCorrect == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
