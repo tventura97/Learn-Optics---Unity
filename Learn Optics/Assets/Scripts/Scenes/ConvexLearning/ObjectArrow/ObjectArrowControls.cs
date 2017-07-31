@@ -74,12 +74,7 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void ResetALRs()
         {
-            FocalPointRayALR.Reset();
-            ParallelRayALR.Reset();
-            OpticalCenterRayALR.Reset();
-            VFocalPointRayALR.Reset();
-            VParallelRayALR.Reset();
-            VOpticalCenterRayALR.Reset();
+
         }
 
         private void checkSelected()

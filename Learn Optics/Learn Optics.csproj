@@ -94,6 +94,11 @@
     <Compile Include="Assets\DebuggingText.cs" />
     <Compile Include="Assets\EquationPanelButtonScript.cs" />
     <Compile Include="Assets\GenerateQuizScript.cs" />
+    <Compile Include="Assets\HintButtonScript.cs" />
+    <Compile Include="Assets\ImageInfoPanelScript.cs" />
+    <Compile Include="Assets\ImageMagnificationTextScript.cs" />
+    <Compile Include="Assets\ImageOrientationTextScript.cs" />
+    <Compile Include="Assets\ImageTypeTextScript.cs" />
     <Compile Include="Assets\LearnMirrorsScene.cs" />
     <Compile Include="Assets\LoadConcaveScene.cs" />
     <Compile Include="Assets\MenuScript.cs" />

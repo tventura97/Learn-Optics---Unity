@@ -20,19 +20,27 @@ namespace DigitalRuby.AnimatedLineRenderer
         private GameObject CurrentALRRay;
         private GameObject Root;
         private GameObject FocalPointMarkerHolder;
+        private GameObject[] CurrentRays;
         private Vector3 HitOne;
         private Vector3 HitTwo;
         private Toggle PlaySceneToggle;
         private Animator EquationPanelAnimator;
+        private Animator PopUpPromptAnimator;
+        private Animator PopUpPromptTextAnimator;
+        private Animator ImageInfoPanelAnimator;
         private float ErrorTolerance;
+        private float TrajectoryErrorTolerance;
         private float LRScalingFactor;
         private bool isCoroutineExecuting;
+        private bool isUICoroutineExecuting;
         private bool isLRInitializing;
         public bool isMirrorSet;
         private bool isConcaveReflective;
         private bool isConvexReflective;
+        private bool isUserRendering;
         private int MirrorSelection;
         private Text ButtonText;
+        private Text PopUpPromptText;
         public GameObject ProgrammableLR;
         public GameObject ProgrammableALR;
         public Vector3 FocalPoint;
@@ -57,6 +65,7 @@ namespace DigitalRuby.AnimatedLineRenderer
 
             //How close the user can be to the correction position of the endpoint of the Light ray. Default is 5%
             ErrorTolerance = 0.015F;
+            TrajectoryErrorTolerance = 0.005F;
             //This just extends the length of the linerenderer. LineRenderer draws a line from point a to point b. The functions used here only get the trajectory of the light beams.
             //We need to extend the length of it or it won't be visible.
             LRScalingFactor = 10000000;
@@ -91,6 +100,10 @@ namespace DigitalRuby.AnimatedLineRenderer
             Root = GameObject.Find("Root");
             EquationPanelAnimator = GameObject.Find("EquationPanel").GetComponent<Animator>();
             ButtonText = transform.GetChild(0).GetComponent<Text>();
+            PopUpPromptAnimator = GameObject.Find("PopUpPrompt").GetComponent<Animator>();
+            PopUpPromptTextAnimator = GameObject.Find("PopUpPromptText").GetComponent<Animator>();
+            PopUpPromptText = GameObject.Find("PopUpPromptText").GetComponent<Text>();
+            ImageInfoPanelAnimator = GameObject.Find("ImageInformationPanel").GetComponent<Animator>();
         }
         private void FixedUpdate()
         {
@@ -103,6 +116,8 @@ namespace DigitalRuby.AnimatedLineRenderer
 
         public void OnClick()
         {
+            //Closes info panel
+            ImageInfoPanelAnimator.SetBool("DisplayInfo", false);
             counter = 0;
             CurrentRayIndex = 0;
             LRIndex = 1;
@@ -138,7 +153,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                     }
                 }
 
-                if (isConcave && !isReflective)
+                if (isConcave && !isConcaveReflective && !isReflective)
                 {
 
                     ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 5),
@@ -152,16 +167,14 @@ namespace DigitalRuby.AnimatedLineRenderer
                     switch (Random.Range(0, 2))
                     {
                         case 0:
-                            ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 22),
+                            ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 30, OpticalElement.transform.position.x - 24),
     OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
                             break;
                         case 1:
-                            ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - FocalLength, OpticalElement.transform.position.x - 5),
+                            ObjectArrow.transform.position = new Vector3(Random.Range(OpticalElement.transform.position.x - 11, OpticalElement.transform.position.x - 5),
     OpticalElement.transform.position.y + 4.84F, OpticalElement.transform.position.z);
                             break;
                     }
-
-
                 }
                 else
                 {
@@ -203,16 +216,17 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 CurrentALRRay = Instantiate(ProgrammableALR, ObjectArrow.transform.position, Quaternion.identity, Root.transform);
             }
+
             CurrentALRRay.GetComponent<SetPoints>().InitializeALR();
             CurrentRay.GetComponent<SetLRPoints>().InitializeLR();
 
-            if (isConcave)
+            if (isConcave || isConcaveReflective || isConvexReflective)
             {
                 CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F), 0);
                 CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(0, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 3.3F));
             }
 
-            else
+            else if (!isConcave && !isConcaveReflective && !isConvexReflective)
             {
                 CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F), 0);
                 CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(0, new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F));
@@ -227,7 +241,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 Vector3 point;
 
-                if (true)
+                if (false)
                 {
                     if (Input.touchCount < 1)
                     {
@@ -241,9 +255,9 @@ namespace DigitalRuby.AnimatedLineRenderer
                             point = new Vector3(ObjectArrow.transform.position.x, ObjectArrow.transform.position.y + 1.32F);
                         }
 
-                        //Display prompt telling user to touch the screen to start ray tracing
 
                     }
+
                     else
                     {
                         point = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
@@ -251,18 +265,30 @@ namespace DigitalRuby.AnimatedLineRenderer
                 }
                 else
                 {
+                    //This is for using the editor to test things
                     point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
                 }
                 switch (counter)
                 {
                     case 0:
-                        //Start interactive ray tracing tutorial, beginning with parallel ray.
 
+                        //Start interactive ray tracing tutorial, beginning with parallel ray.
                         //This snippet of code ensures that this is only called once
                         if (!isLRInitializing)
                         {
                             isLRInitializing = true;
+                            //If user has already touched the screen, display the message for a short time. Otherwise, display for 5 seconds
+                            if (Input.touchCount > 0)
+                            {
+                                DisplayPrompt("Touch the screen to draw a ray", 0);
+
+                            }
+                            else
+                            {
+                                DisplayPrompt("Touch the screen to draw a ray", 3);
+
+                            }
                             if (ImageArrow.GetComponent<Animator>() != null)
                             {
                                 ImageArrow.GetComponent<Animator>().enabled = false;
@@ -299,6 +325,8 @@ namespace DigitalRuby.AnimatedLineRenderer
                         break;
 
                     case 3:
+                        print("case 3");
+                        ImageInfoPanelAnimator.SetBool("DisplayInfo", true);
                         if (isConcave && !isReflective)
                         {
                             //Reverse Directions of FocalPoint Ray and Parallel Ray automatically
@@ -325,17 +353,17 @@ namespace DigitalRuby.AnimatedLineRenderer
 
                             ImageArrow.GetComponent<ImageArrowGeneration>().CalculatePosition();
                             ImageArrow.GetComponent<ImageArrowGeneration>().SetPosition();
-                            isInteractable = false;
                             transform.GetChild(0).gameObject.SetActive(true);
+                            isInteractable = false;
 
                         }
-
                         break;
 
                 }
                 //limits the number of times the line renderer can have its position set. If this number is too high, this if statement is too high, the next few lines of code try to improperly
                 //position the line renderer, so then we have stray rays of light everywhere
                 int LineRendLimit;
+
                 if (isReflective)
                 {
                     LineRendLimit = 2;
@@ -425,7 +453,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                                     CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(LRScalingFactor * (FocalPoint - new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F)), LRScalingFactor / 10);
                                     CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, LRScalingFactor * (FocalPoint - new Vector3(OpticalElement.transform.position.x, ObjectArrow.transform.position.y + 1.32F)));
                                 }
-
+                                StartCoroutine(ExecuteAfterTime(0.5F));
                                 counter++;
                                 isLRInitializing = false;
                             }
@@ -533,11 +561,8 @@ namespace DigitalRuby.AnimatedLineRenderer
                                         CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartColor = new Color(0, 255, 0);
                                         CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndColor = new Color(0, 255, 0);
                                     }
-
-
-                                    isInteractable = false;
-                                    isLRInitializing = false;
                                     counter++;
+                                    isLRInitializing = false;
                                 }
 
                             }
@@ -553,7 +578,6 @@ namespace DigitalRuby.AnimatedLineRenderer
                 //Focal Point Ray
                 case 2:
                     StartCoroutine(ExecuteAfterTime(0.5F));
-                    print("case 2");
                     if (!isReflective)
                     {
                         switch (LRIndex)
@@ -593,7 +617,6 @@ namespace DigitalRuby.AnimatedLineRenderer
                                         CurrentRay.GetComponent<SetLRPoints>().SetLineRendPoints(LRIndex, new Vector3(1000, CalculateFinalPosition().y, CalculateFinalPosition().z));
                                         CurrentALRRay.GetComponent<SetPoints>().SetLinePoint(new Vector3(1000, CalculateFinalPosition().y, CalculateFinalPosition().z), 25);
                                     }
-
                                     counter++;
                                     isLRInitializing = false;
                                     //This is the last ray to be drawn. Once this is drawn correctly (the function ensures it), the image will be generated.
@@ -603,9 +626,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                                         ImageArrow.GetComponent<ImageArrowGeneration>().CalculatePosition();
                                         ImageArrow.GetComponent<ImageArrowGeneration>().SetPosition();
                                         print("position set");
-                                        isInteractable = false;
                                     }
-
 
                                 }
                                 break;
@@ -665,13 +686,34 @@ namespace DigitalRuby.AnimatedLineRenderer
 
             yield return new WaitForSeconds(time);
 
-            if (CurrentRay != null)
+            for (int i = 0; i < 3; i++)
             {
-                CurrentRay.GetComponent<SetLRPoints>().SetVisible(true);
+                CurrentRays = GameObject.FindGameObjectsWithTag("ProgrammableLR");
+                CurrentRay = CurrentRays[CurrentRays.Length - 1];
             }
+
+            CurrentRay.GetComponent<SetLRPoints>().SetVisible(true);
+
             isCoroutineExecuting = false;
         }
 
+        IEnumerator DestroyMessagePrompt(float time)
+        {
+            if (isUICoroutineExecuting)
+                yield break;
+
+            isUICoroutineExecuting = true;
+
+            yield return new WaitForSeconds(time);
+
+
+            PopUpPromptAnimator.SetBool("DisplayPrompt", false);
+            PopUpPromptTextAnimator.SetBool("DisplayPrompt", false);
+
+
+
+            isUICoroutineExecuting = false;
+        }
         Vector3[] CalculatePositions()
         {
             Vector3[] points = new Vector3[2];
@@ -883,12 +925,11 @@ namespace DigitalRuby.AnimatedLineRenderer
             Vector2 UserTrajectory = new Vector2(point.x, point.y) - new Vector2(CorrectPosition[0].x, CorrectPosition[0].y);
             Vector2 CalculatedTrajectory = new Vector2(CorrectPosition[1].x, CorrectPosition[1].y) - new Vector2(CorrectPosition[0].x, CorrectPosition[0].y);
 
-            print(UserTrajectory + "||" + CalculatedTrajectory + "||" +  CorrectPosition[0] + "||" + CorrectPosition[1]);
 
             //Don't forget to normalize the vectors and make sure that the length of the user line renderer is long enough that they don't accidentally get the correct answer just by tapping in the right spot near the lens/mirror
-            if ((Vector2.Dot(UserTrajectory.normalized, CalculatedTrajectory.normalized) > 1 - ErrorTolerance && Vector2.Dot(UserTrajectory.normalized, CalculatedTrajectory.normalized) < 1 + ErrorTolerance))
+            if ((Vector2.Dot(UserTrajectory.normalized, CalculatedTrajectory.normalized) > 1 - TrajectoryErrorTolerance && Vector2.Dot(UserTrajectory.normalized, CalculatedTrajectory.normalized) < 1 + TrajectoryErrorTolerance))
             {
-                if (UserTrajectory.magnitude > 15)
+                if (UserTrajectory.magnitude > 20)
                 {
                     XCorrect = true;
                     YCorrect = true;
@@ -914,6 +955,29 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 return false;
             }
+        }
+
+        private void DisplayPrompt(string text, float duration)
+        {
+            PopUpPromptAnimator.SetBool("DisplayPrompt", true);
+            PopUpPromptTextAnimator.SetBool("DisplayPrompt", true);
+            PopUpPromptText.text = text;
+            StartCoroutine(DestroyMessagePrompt(duration));
+
+        }
+        public int GetCounter()
+        {
+            return counter;
+        }
+
+        public int GetLRIndex()
+        {
+            return LRIndex;
+        }
+
+        public int GetCurrentRayIndex()
+        {
+            return CurrentRayIndex;
         }
     }
 
