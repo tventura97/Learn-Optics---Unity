@@ -241,7 +241,7 @@ namespace DigitalRuby.AnimatedLineRenderer
             {
                 Vector3 point;
 
-                if (false)
+                if (true)
                 {
                     if (Input.touchCount < 1)
                     {
