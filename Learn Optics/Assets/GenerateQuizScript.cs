@@ -354,9 +354,18 @@ namespace DigitalRuby.AnimatedLineRenderer
                             ImageArrow.GetComponent<ImageArrowGeneration>().CalculatePosition();
                             ImageArrow.GetComponent<ImageArrowGeneration>().SetPosition();
                             transform.GetChild(0).gameObject.SetActive(true);
-                            isInteractable = false;
-
                         }
+                        counter++;
+                        break;
+
+                    case 4:
+                        //Sometimes the line renderers get set multiple times resulting in visual glitches. This destroys them so that only the animated line renderers are visible
+                        GameObject[] ProgrammableLineRenderers = GameObject.FindGameObjectsWithTag("ProgrammableLR");
+                        for (int i = 0; i < ProgrammableLineRenderers.Length; i++)
+                        {
+                            //Destroy(ProgrammableLineRenderers[i]);
+                        }
+                        isInteractable = false;
                         break;
 
                 }
@@ -561,7 +570,7 @@ namespace DigitalRuby.AnimatedLineRenderer
                                         CurrentALRRay.GetComponent<AnimatedLineRenderer>().StartColor = new Color(0, 255, 0);
                                         CurrentALRRay.GetComponent<AnimatedLineRenderer>().EndColor = new Color(0, 255, 0);
                                     }
-                                    counter++;
+                                    counter = 3;
                                     isLRInitializing = false;
                                 }
 
@@ -634,7 +643,6 @@ namespace DigitalRuby.AnimatedLineRenderer
                     }
                     else
                     {
-                        //Do nothing
                     }
                     break;
             }

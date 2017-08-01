@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Very rudimentary method of collecting feedback. If more data is required to be collected, just adjust the feedback class here to include that data. It's all written to a JSON and 
+//pushed to a firebase database right now. 
 
 public class FeedbackButtonScript : MonoBehaviour
 {
@@ -56,6 +58,12 @@ public class FeedbackButtonScript : MonoBehaviour
         Feedback Feedback = new Feedback(GradeIF.text, FeedbackIF.text);
         string FeedbackJSONFile = JsonUtility.ToJson(Feedback);
         reference.Child("feedback").Child(NameIF.text).SetRawJsonValueAsync(FeedbackJSONFile);
+        NameIF.text = "";
+        GradeIF.text = "";
+        FeedbackIF.text = "";
+
+        //Close the button
+        GameObject.Find("CloseFeedbackPanelButton").GetComponent<Button>().onClick.Invoke();
     }
 
     public void SendFeedback(string Feedback)

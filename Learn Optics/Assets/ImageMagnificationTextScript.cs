@@ -47,7 +47,7 @@ namespace DigitalRuby.AnimatedLineRenderer
         {
             //Magnification is either enlarged or diminished
             //If image arrow is bigger, it's enlarged
-            if (ImageArrow.transform.localScale.y/ImageArrow.transform.localScale.y > 1)
+            if (ImageArrow.transform.localScale.y/ObjectArrow.transform.localScale.y > 1)
             {
                 Magnification.text = "Enlarged";
             }
