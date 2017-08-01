@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "70077923656",
+    "firebase_url": "https://njit-optics-unity-app-feedback.firebaseio.com",
+    "project_id": "njit-optics-unity-app-feedback",
+    "storage_bucket": "njit-optics-unity-app-feedback.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70077923656:android:daeda6d714795a03",
+        "android_client_info": {
+          "package_name": "com.NJITREU.LearnOptics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70077923656-92dlj967htr9gcvf9298f6kai1koa7cq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL6zOIDsSY8kFrPrnygZHdO7Ly89fm6KU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
