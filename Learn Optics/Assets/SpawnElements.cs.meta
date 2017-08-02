@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: ea2c9c83a8149184a89b21a39e7890a5
+timeCreated: 1501690464
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - ConcaveLens: {fileID: 1284459474395002, guid: e8b81702902886549bd5138d4db44bec,
+      type: 2}
+  - ConvexLens: {fileID: 1542557499061202, guid: d9d960a14db123f43b3d27358acb0699,
+      type: 2}
+  - ConcaveMirror: {fileID: 1134098938161856, guid: c24b52ad4360c5743942f7af545ff18c,
+      type: 2}
+  - ConvexMirror: {fileID: 1801964926712986, guid: 7bb01575a4f13774589402ffc7263d06,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

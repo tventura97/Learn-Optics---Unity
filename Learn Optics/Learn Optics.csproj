@@ -82,11 +82,17 @@
     <Reference Include="UnityEditor.iOS.Extensions.Common">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Google.MiniJson">
-      <HintPath>Assets\Firebase\Plugins\Google.MiniJson.dll</HintPath>
+    <Reference Include="Firebase.App">
+      <HintPath>Assets\Firebase\Plugins\Firebase.App.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.Auth">
+      <HintPath>Assets\Firebase\Plugins\Firebase.Auth.dll</HintPath>
     </Reference>
     <Reference Include="Firebase.Database">
       <HintPath>Assets\Firebase\Plugins\Firebase.Database.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.MiniJson">
+      <HintPath>Assets\Firebase\Plugins\Google.MiniJson.dll</HintPath>
     </Reference>
     <Reference Include="Google.Sharpen">
       <HintPath>Assets\Firebase\Plugins\Google.Sharpen.dll</HintPath>
@@ -97,12 +103,6 @@
     <Reference Include="Unity.Tasks">
       <HintPath>Assets\Firebase\Plugins\Unity.Tasks.dll</HintPath>
     </Reference>
-    <Reference Include="Firebase.Auth">
-      <HintPath>Assets\Firebase\Plugins\Firebase.Auth.dll</HintPath>
-    </Reference>
-    <Reference Include="Firebase.App">
-      <HintPath>Assets\Firebase\Plugins\Firebase.App.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\AnimatedLRScript.cs" />
@@ -110,6 +110,7 @@
     <Compile Include="Assets\AnimatedLineRenderer\Scripts\PhasorScript.cs" />
     <Compile Include="Assets\CalculateMagnification.cs" />
     <Compile Include="Assets\CalculateThinLens.cs" />
+    <Compile Include="Assets\ChangeRayNumber.cs" />
     <Compile Include="Assets\CheckButton.cs" />
     <Compile Include="Assets\CloseFBPanel.cs" />
     <Compile Include="Assets\ConcaveLearningScript.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Assets\SetLRPoints.cs" />
     <Compile Include="Assets\SetPortrait.cs" />
     <Compile Include="Assets\SkipLessonButtonOnClick.cs" />
+    <Compile Include="Assets\SpawnElements.cs" />
     <Compile Include="Assets\TestToggle.cs" />
   </ItemGroup>
   <ItemGroup>
