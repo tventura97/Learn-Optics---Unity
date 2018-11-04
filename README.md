@@ -11,4 +11,4 @@ It creates a sandbox environment that allows users to play with different types 
 
 The application's calculates the trajectory of the light rays using [ray transfer matrix analysis](https://en.wikipedia.org/wiki/Ray_transfer_matrix_analysis). 
 
-![ray-transfer-matrix-analysis](https://imgur.com/a/Q2wTpPd)
+![ray-transfer-matrix-analysis](https://i.imgur.com/pOSKAUS.png)
