@@ -3,8 +3,9 @@
 
 
 Optics Application for NJIT REU
-Educational app designed to supplement a university-level physics curriculum. Graphically demonstrates and teaches ray-tracing concepts
+Educational Android app designed to supplement a university-level physics curriculum. Graphically demonstrates and teaches ray-tracing concepts.
 There's a bunch of technical stuff so if you just wanna see how the app works/looks, you can skip down to the bottom. 
+Currently only designed for 16:9 aspect ratios. The UI elements will not be rendered properly on a screen with a longer than normal display (say like the Pixel 2 XL at 18:9). Will implement a fix after midterm season.
 
 ## Introduction
 
@@ -27,3 +28,13 @@ they can interact with the light rays. Due to the paraxial ray assumption made i
 ![3d-element-blender](https://i.imgur.com/kJ7sBRC.png)
 
 
+### App screenshots (explanations, videos & demos coming soon)
+![app-menu](https://i.imgur.com/oaO0eWT.png)
+
+![sandbox-mode](https://i.imgur.com/EhYGrBF.png)
+
+![analysis-of-formed-image](https://i.imgur.com/xjPsbzs.png)
+
+![equation-panel](https://i.imgur.com/kYsQ1t7.png)
+
+![single-frame-from-tutorial](https://i.imgur.com/2BnMg0h.png)
