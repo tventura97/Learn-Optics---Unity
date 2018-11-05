@@ -28,7 +28,7 @@ they can interact with the light rays. Due to the paraxial ray assumption made i
 ![3d-element-blender](https://i.imgur.com/kJ7sBRC.png)
 
 
-### App screenshots (explanations, videos & demos coming soon)
+## App screenshots (explanations, videos & demos coming soon)
 ![app-menu](https://i.imgur.com/oaO0eWT.png)
 
 ![sandbox-mode](https://i.imgur.com/EhYGrBF.png)
