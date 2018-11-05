@@ -1,7 +1,4 @@
 # Learn-Optics---Unity
-(Use the develop branch. This branch is behind.)
-
-
 Optics Application for NJIT REU
 Educational Android app designed to supplement a university-level physics curriculum. Graphically demonstrates and teaches ray-tracing concepts.
 There's a bunch of technical stuff so if you just wanna see how the app works/looks, you can skip down to the bottom. 
